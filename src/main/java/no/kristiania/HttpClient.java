@@ -2,7 +2,12 @@ package no.kristiania;
 
 public class HttpClient {
 
-    public static int dummyTest() {
-        return 200;
+    public HttpClient(String host , int port, String requestTarget) {
+
+    }
+
+
+    public int getStatusCode() {
+        return 0;
     }
 }

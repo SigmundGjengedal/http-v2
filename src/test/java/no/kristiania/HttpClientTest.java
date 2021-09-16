@@ -6,9 +6,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpClientTest {
+
    @Test
-   void shouldReturn200(){
-      assertEquals(200, HttpClient.dummyTest()) ;
+   void shouldReturnStatesCode(){
+      assertEquals(200, new HttpClient("httpbin.org",80, "/html").getStatusCode()) ;
    }
 
 }
