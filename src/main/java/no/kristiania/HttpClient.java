@@ -64,4 +64,8 @@ public class HttpClient {
     public String getHeader(String headerName) {
         return headerFields.get(headerName);// headerFields sin get av headerName
     }
+
+    public int getContentLength() {
+        return 0;
+    }
 }
