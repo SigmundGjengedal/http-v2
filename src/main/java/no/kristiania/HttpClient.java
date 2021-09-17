@@ -55,7 +55,7 @@ public class HttpClient {
 
     // Leser en linje i response headers(input). Første er status line (f.eks "HTTP/1.1 200 OK").
     // Skal den lese flere linjer må den settes i en while der den kalles.
-    private String readLine(Socket socket) throws IOException {
+    static String readLine(Socket socket) throws IOException {
         StringBuilder result = new StringBuilder();
         int c;
         // skal lese en linje, dvs til CR
