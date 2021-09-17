@@ -66,6 +66,6 @@ public class HttpClient {
     }
 
     public int getContentLength() {
-        return 0;
+        return Integer.parseInt(getHeader("Content-Length"));
     }
 }
