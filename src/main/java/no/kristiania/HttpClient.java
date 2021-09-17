@@ -3,31 +3,45 @@ package no.kristiania;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpClient {
-
+    // fields
     private final int statusCode;
-
+    private final Map<String, String> headerFields = new HashMap<>();
+    // constructor
     public HttpClient(String host , int port, String requestTarget) throws IOException {
-        // socket for å connecte til server. Connecter til host og port som angitt.
+        // Må ha socket for å connecte til server. Connecter til host og port som angitt.
         Socket socket1 = new Socket(host,port);
 
-        // skriver en http-request(en string). De tre første linjene i Request Headers
+        // Skal skrive en http-request(en string). De tre første linjene i Request Headers
         String request = "GET " + requestTarget + " HTTP/1.1\r\n" +
                 "Host: " + host + "\r\n" +
                 "Connection: close\r\n" +
                 "\r\n";
-        // sender den til server.Output fra klient. Sender stringen som bytes
+        // sender den til server, som output fra klient. Sender stringen som bytes
         socket1.getOutputStream().write(request.getBytes());
 
-        //HM ReadLine gir oss hele status line. Den består av tre deler. Vi er bare interessert i statuscoden(f.eks 200).
+        //Skal lese statuskode: HM ReadLine gir oss tilbake hele status line. Den består av tre deler.
+        // Vi er bare interessert i statuscoden(f.eks 200).
         String[] statusLine = readLine(socket1).split(" ");
         this.statusCode = Integer.parseInt(statusLine[1]);
+
+        // skal lese Headerlines
+        String headerLine;
+        while (!(headerLine = readLine(socket1)) .isBlank()){ // ved blank linje er headers ferdig, da kommer body.
+              int colonPos = headerLine.indexOf(":");
+              String headerField = headerLine.substring(0,colonPos);
+              String headerValue = headerLine.substring(colonPos+1).trim(); // trim fjerner WS fra begge sider.
+              headerFields.put(headerField,headerValue);  // lagres i hashmap
+        }
         }
 
     // hjelpemetoder(HM)
 
-    // Skal lese tilbake første linje i response headers(input), som er status line (f.eks "HTTP/1.1 200 OK")
+    // Leser en linje i response headers(input). Første er status line (f.eks "HTTP/1.1 200 OK").
+    // Skal den lese flere linjer må den settes i en while der den kalles.
     private String readLine(Socket socket) throws IOException {
         StringBuilder result = new StringBuilder();
         int c;
@@ -35,6 +49,9 @@ public class HttpClient {
         while ((c = socket.getInputStream().read()) != '\r' ){
             result.append((char)c); // konverterer til char
         }
+        // må lese \n for å havne riktig til neste linje
+        int expectedNewLine = socket.getInputStream().read();
+        assert expectedNewLine == '\n';
         return result.toString();
     }
 
@@ -45,6 +62,6 @@ public class HttpClient {
     }
 
     public String getHeader(String headerName) {
-        return null;
+        return headerFields.get(headerName);// headerFields sin get av headerName
     }
 }

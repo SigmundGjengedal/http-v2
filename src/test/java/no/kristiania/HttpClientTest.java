@@ -15,7 +15,7 @@ public class HttpClientTest {
    }
 
    @Test
-   void shouldReturnHeaders(){
+   void shouldReturnHeaders() throws IOException {
       HttpClient client = new HttpClient("httpbin.org",80,"/html");
       assertEquals("text/html; charset=utf-8",client.getHeader("Content-Type"));
    }
