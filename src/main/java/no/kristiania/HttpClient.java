@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpClient {
-    // fields
+    //********************************** fields
     private final int statusCode;
     private final Map<String, String> headerFields = new HashMap<>();
-    // constructor
+    private String messageBody;
+
+    //************************************* constructor
     public HttpClient(String host , int port, String requestTarget) throws IOException {
         // Må ha socket for å connecte til server. Connecter til host og port som angitt.
         Socket socket1 = new Socket(host,port);
@@ -28,7 +30,7 @@ public class HttpClient {
         String[] statusLine = readLine(socket1).split(" ");
         this.statusCode = Integer.parseInt(statusLine[1]);
 
-        // skal lese Headerlines
+        // skal lese flere Headerlines. Lagrer Field og value i hashmap
         String headerLine;
         while (!(headerLine = readLine(socket1)) .isBlank()){ // ved blank linje er headers ferdig, da kommer body.
               int colonPos = headerLine.indexOf(":");
@@ -36,9 +38,20 @@ public class HttpClient {
               String headerValue = headerLine.substring(colonPos+1).trim(); // trim fjerner WS fra begge sider.
               headerFields.put(headerField,headerValue);  // lagres i hashmap
         }
-        }
+        // skal lese hele body, ikke bare linjer: Setter den lik HM readBytes()
+        this.messageBody = readBytes(socket1, getContentLength());
+    }// end of constructor
 
-    // hjelpemetoder(HM)
+    //********************************* hjelpemetoder(HM)
+
+    // leser hele body
+    private String readBytes(Socket socket, int contentLength) throws IOException {
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < contentLength; i++) {
+            buffer.append((char)socket.getInputStream().read());
+        }
+        return buffer.toString();
+    }
 
     // Leser en linje i response headers(input). Første er status line (f.eks "HTTP/1.1 200 OK").
     // Skal den lese flere linjer må den settes i en while der den kalles.
@@ -56,7 +69,7 @@ public class HttpClient {
     }
 
 
-    // gettere
+    //************************************** gettere
     public int getStatusCode() {
         return statusCode;
     }
@@ -65,7 +78,12 @@ public class HttpClient {
         return headerFields.get(headerName);// headerFields sin get av headerName
     }
 
+    // henter de ut fra headerFieldet content-length, som alltid sier hvor stort innholdet er.
     public int getContentLength() {
         return Integer.parseInt(getHeader("Content-Length"));
+    }
+
+    public String getMessageBody() {
+        return messageBody;
     }
 }
