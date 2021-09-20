@@ -26,13 +26,15 @@ public class HttpServer {
         System.out.println(requestLine);
 
         // 2: kan gi output. Sender en http-respons til chrome
-        String messageBody = "<h1> Hello World !!!</h1>";
+        String body = "<h1> Hello World !!!</h1>";
+        String contentType = "text/html";
 
         String responseToClient =  "HTTP/1.1 200 OK\r\n"+
-                "Content-Length: " + messageBody.length() +"\r\n" +
+                "Content-Length: " + body.getBytes().length +"\r\n" +
+                "Content type: "+ contentType+"\r\n"+
                 "Connection: close\r\n"+
                 "\r\n" +
-                messageBody;
+                body;
         clientSocket.getOutputStream().write((responseToClient).getBytes()); // må sendes som bytes
 
         // skriver ut headerlinjene som chrome sendte ut.
