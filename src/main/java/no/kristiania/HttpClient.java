@@ -17,7 +17,7 @@ public class HttpClient {
         // Må ha socket for å connecte til server. Connecter til host og port som angitt.
         Socket socket1 = new Socket(host,port);
 
-        // Skal skrive en http-request(en string). De tre første linjene i Request Headers
+        // Skal skrive en http-request(en string). Requestline + to første linjene i Request Headers
         String request = "GET " + requestTarget + " HTTP/1.1\r\n" +
                 "Host: " + host + "\r\n" +
                 "Connection: close\r\n" +
