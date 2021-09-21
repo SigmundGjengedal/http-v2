@@ -77,4 +77,8 @@ public class HttpServer {
             System.out.println(headerLine);
         }*/
     }
+
+    public int getPort() {
+        return serverSocket.getLocalPort();
+    }
 }

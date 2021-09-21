@@ -12,16 +12,16 @@ class HttpServerTest {
         //må starte en server som skal få request
         HttpServer server = new HttpServer(1990);
         //client skal connecte til samme server:
-        HttpClient client = new HttpClient("localhost",1990,"/non-existing");
+        HttpClient client = new HttpClient("localhost",server.getPort(),"/non-existing");
         assertEquals(404,client.getStatusCode());
     }
 
     @Test
     void ShouldRespondWithRequestTargetIn404() throws IOException {
         //må starte en server som skal få request
-        HttpServer server = new HttpServer(1990);
+        HttpServer server = new HttpServer(1991);
         //client skal connecte til samme server:
-        HttpClient client = new HttpClient("localhost",1990,"/non-existing");
-        assertEquals("File not found:  /non-existing",client.getMessageBody());
+        HttpClient client = new HttpClient("localhost",server.getPort(),"/non-existing");
+        assertEquals("File not found: /non-existing",client.getMessageBody());
     }
 }
