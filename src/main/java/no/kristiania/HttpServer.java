@@ -15,11 +15,18 @@ public class HttpServer {
         new Thread(this::handleClients).start();
     }
 
+    // leser fra klients connection,  og svarer den med 404 not found
     private void handleClients(){
-        // må accepte: settes til clientSocket. kobler altså outputten fra server til inputten til client:
+
         try { // venter på svar
+            // må accepte: settes til clientSocket. kobler altså outputten fra server til inputten til client:
             Socket clientSocket = serverSocket.accept();
-            String response = "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
+            // det serveren skal svare klienten
+            String responseText ="File not found";
+            String response = "HTTP/1.1 404 Not Found\r\n" +
+                    "Content-Length: " +responseText.getBytes().length + "\r\n" +
+                    "\r\n"+
+                    responseText;
             //  sender response ut fra clientSocket
             clientSocket.getOutputStream().write(response.getBytes());
         }catch(IOException e){
