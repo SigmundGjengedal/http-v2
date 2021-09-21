@@ -27,7 +27,11 @@ class HttpServerTest {
     void shouldRespondWith200ForKnownRequestTarget() throws IOException {
         HttpServer server = new HttpServer(1993);
         HttpClient client = new HttpClient("localhost",server.getPort(),"/hello");
-        assertEquals(200, client.getStatusCode());
-        assertEquals("Hello World", client.getMessageBody());
+        assertAll(
+                () -> assertEquals(200, client.getStatusCode()),
+                () -> assertEquals("Hello World", client.getMessageBody())
+        );
+
+
     }
 }
