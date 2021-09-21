@@ -33,7 +33,7 @@ class HttpServerTest {
         assertAll(
                 () -> assertEquals(200, client.getStatusCode()),
                 () -> assertEquals("text/html", client.getHeader("Content-Type")),
-                () -> assertEquals("Hello World", client.getMessageBody())
+                () -> assertEquals("<p>Hello World</p>", client.getMessageBody())
         );
     }
 

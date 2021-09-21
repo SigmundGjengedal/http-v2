@@ -42,9 +42,9 @@ public class HttpServer {
                 clientSocket.getOutputStream().write(response.getBytes());
             }else{
 
-                if (rootDirectory!= null &&  Files.exists(rootDirectory.resolve(requestTarget))){
+                if (rootDirectory!= null &&  Files.exists(rootDirectory.resolve(requestTarget.substring(1)))){
                     // finner fila som request target peker til:
-                    String responseText = Files.readString(rootDirectory.resolve(requestTarget));
+                    String responseText = Files.readString(rootDirectory.resolve(requestTarget.substring(1)));
 
                     String response = "HTTP/1.1 200 ok\r\n" +
                             "Content-Length: " +responseText.getBytes().length + "\r\n" +
