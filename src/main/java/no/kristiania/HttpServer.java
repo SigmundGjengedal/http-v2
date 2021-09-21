@@ -3,10 +3,12 @@ package no.kristiania;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Path;
 
 public class HttpServer {
 
     private final ServerSocket serverSocket;
+    private Path rootDirectory;
 
     public HttpServer(int serverPort) throws IOException {
         // må lytte til en severSocket:
@@ -32,6 +34,7 @@ public class HttpServer {
                 String responseText ="Hello World";
                 String response = "HTTP/1.1 200 ok\r\n" +
                         "Content-Length: " +responseText.getBytes().length + "\r\n" +
+                        "Content-Type: text/html\r\n" +
                         "\r\n"+
                         responseText;
                 clientSocket.getOutputStream().write(response.getBytes());
@@ -92,5 +95,9 @@ public class HttpServer {
 
     public int getPort() {
         return serverSocket.getLocalPort();
+    }
+
+    public void setRoot(Path rootDirectory) {
+        this.rootDirectory = rootDirectory;
     }
 }
