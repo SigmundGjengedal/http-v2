@@ -5,6 +5,28 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class HttpServer {
+
+    private final ServerSocket serverSocket;
+
+    public HttpServer(int serverPort) throws IOException {
+        // må lytte til en severSocket:
+        serverSocket = new ServerSocket(serverPort);
+        // i en separat tråd, kjør handleClients
+        new Thread(this::handleClients).start();
+    }
+
+    private void handleClients(){
+        // må accepte: settes til clientSocket. kobler altså outputten fra server til inputten til client:
+        try { // venter på svar
+            Socket clientSocket = serverSocket.accept();
+            String response = "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
+            //  sender response ut fra clientSocket
+            clientSocket.getOutputStream().write(response.getBytes());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) throws IOException {
 
         /*HTTPCLIENT: Vi fikk verdier fra chrome, som vi parsa, altså leste og tolket
@@ -16,9 +38,9 @@ public class HttpServer {
 
         // når vi skal ha en server bruker vi ServerSocket. Den åpner en port på vår pc.
         // Vi er serveren. Vi trenger derfor ikke angi serveren, men porten. Velger 10080.IOEx om porten er tatt fra før.
-        ServerSocket serverSocket = new ServerSocket(8080);// skriv i chrome: localhost:8080
+        ServerSocket serverSocket = new ServerSocket(1990);// skriv i chrome: localhost:8080
 
-        // nå får vi tilbake noe(et socket object lik det klienten sendte), det må vi akseptere:
+        // nå må vi ventet på svar klientetn, vi får vi tilbake noe(et socket object lik det klienten sendte), det må vi akseptere:
         Socket clientSocket = serverSocket.accept();
 
         // 1: Vi kan ta input: leser den første linja fra server,som er requestlinen fra chrome
@@ -26,8 +48,8 @@ public class HttpServer {
         System.out.println(requestLine);
 
         // 2: kan gi output. Sender en http-respons til chrome
-        String body = "<h1> Hello World !!!</h1>";
-        String contentType = "text/html";
+        String body = "<h1> Hellååå World !!!</h1>";
+        String contentType = "text/html; charset=utf-8";
 
         String responseToClient =  "HTTP/1.1 200 OK\r\n"+
                 "Content-Length: " + body.getBytes().length +"\r\n" +
@@ -37,10 +59,10 @@ public class HttpServer {
                 body;
         clientSocket.getOutputStream().write((responseToClient).getBytes()); // må sendes som bytes
 
-        // skriver ut headerlinjene som chrome sendte ut.
+        /* skriver ut headerlinjene som chrome sendte ut.
         String headerLine;
         while(!(headerLine = HttpClient.readLine(clientSocket)).isBlank()) {
             System.out.println(headerLine);
-        }
+        }*/
     }
 }

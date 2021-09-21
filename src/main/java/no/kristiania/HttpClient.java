@@ -38,6 +38,8 @@ public class HttpClient {
               String headerValue = headerLine.substring(colonPos+1).trim(); // trim fjerner WS fra begge sider.
               headerFields.put(headerField,headerValue);  // lagres i hashmap
         }
+
+
         // skal lese hele body, ikke bare linjer: Setter den lik HM readBytes()
         this.messageBody = readBytes(socket1, getContentLength());
     }// end of constructor
