@@ -21,19 +21,30 @@ public class HttpServer {
         try { // venter på svar
             // må accepte: settes til clientSocket. kobler altså outputten fra server til inputten til client:
             Socket clientSocket = serverSocket.accept();
-
             // må lese requestline
             String[] requestLine = HttpClient.readLine(clientSocket).split(" ");
             // henter ut requestTarget fra requestLine
             String requestTarget = requestLine[1];
-            // det serveren skal svare klienten
-            String responseText ="File not found: " + requestTarget;
-            String response = "HTTP/1.1 404 Not Found\r\n" +
-                    "Content-Length: " +responseText.getBytes().length + "\r\n" +
-                    "\r\n"+
-                    responseText;
-            //  sender response ut fra clientSocket
-            clientSocket.getOutputStream().write(response.getBytes());
+
+            // kontrollstuktur på requesTarget:
+
+            if(requestTarget.equals("/hello")){
+                String responseText ="Hello World";
+                String response = "HTTP/1.1 200 ok\r\n" +
+                        "Content-Length: " +responseText.getBytes().length + "\r\n" +
+                        "\r\n"+
+                        responseText;
+                clientSocket.getOutputStream().write(response.getBytes());
+            }else{
+                // det serveren skal svare klienten
+                String responseText ="File not found: " + requestTarget;
+                String response = "HTTP/1.1 404 Not Found\r\n" +
+                        "Content-Length: " +responseText.getBytes().length + "\r\n" +
+                        "\r\n"+
+                        responseText;
+                //  sender response ut fra clientSocket
+                clientSocket.getOutputStream().write(response.getBytes());
+            }
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -60,7 +71,7 @@ public class HttpServer {
         System.out.println(requestLine);
 
         // 2: kan gi output. Sender en http-respons til chrome
-        String body = "<h1> Hellååå World !!!</h1>";
+        String body = "<h1> Hello World !!!</h1>";
         String contentType = "text/html; charset=utf-8";
 
         String responseToClient =  "HTTP/1.1 200 OK\r\n"+
