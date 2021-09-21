@@ -44,7 +44,7 @@ class HttpServerTest {
         server.setRoot(Paths.get("target/test-classes"));
         //  lager innhold, og skriver innhold til en fil i den katalogen
         String fileContent = "A file created at " + LocalTime.now();
-        Files.write(Paths.get("target/test-classes/example-file-txt"),fileContent.getBytes());
+        Files.write(Paths.get("target/test-classes/example-file.txt"),fileContent.getBytes());
 
         // sier til serveren at jeg skal hente den fila, og at jeg da forventer å få innholdet i den  fila.
         HttpClient client = new HttpClient("localhost",server.getPort(),"/example-file.txt");

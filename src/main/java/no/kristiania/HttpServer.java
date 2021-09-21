@@ -3,6 +3,7 @@ package no.kristiania;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class HttpServer {
@@ -31,7 +32,8 @@ public class HttpServer {
             // kontrollstuktur på requesTarget:
 
             if(requestTarget.equals("/hello")){
-                String responseText ="Hello World";
+                String responseText ="<p>Hello World</p>";
+
                 String response = "HTTP/1.1 200 ok\r\n" +
                         "Content-Length: " +responseText.getBytes().length + "\r\n" +
                         "Content-Type: text/html\r\n" +
@@ -39,13 +41,26 @@ public class HttpServer {
                         responseText;
                 clientSocket.getOutputStream().write(response.getBytes());
             }else{
-                // det serveren skal svare klienten
-                String responseText ="File not found: " + requestTarget;
-                String response = "HTTP/1.1 404 Not Found\r\n" +
-                        "Content-Length: " +responseText.getBytes().length + "\r\n" +
-                        "\r\n"+
+
+                if (rootDirectory!= null &&  Files.exists(rootDirectory.resolve(requestTarget))){
+                    // finner fila som request target peker til:
+                    String responseText = Files.readString(rootDirectory.resolve(requestTarget));
+
+                    String response = "HTTP/1.1 200 ok\r\n" +
+                            "Content-Length: " +responseText.getBytes().length + "\r\n" +
+                            "Content-Type: text/html\r\n" +
+                            "\r\n"+
+                            responseText;
+                    //  sender responsen ut fra clientSocket
+                    clientSocket.getOutputStream().write(response.getBytes());
+                    return;
+                }
+                String responseText = "File not found: " + requestTarget;
+
+                String response = "HTTP/1.1 404 Not found\r\n" +
+                        "Content-Length: " + responseText.length() + "\r\n" +
+                        "\r\n" +
                         responseText;
-                //  sender response ut fra clientSocket
                 clientSocket.getOutputStream().write(response.getBytes());
             }
         }catch(IOException e){
