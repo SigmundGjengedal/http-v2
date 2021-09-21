@@ -10,7 +10,7 @@ class HttpServerTest {
     @Test
     void shouldReturn404ForUnknownRequestTarget() throws IOException {
         //må starte en server som skal få request
-        HttpServer server = new HttpServer(1990);
+        HttpServer server = new HttpServer(1991);
         //client skal connecte til samme server:
         HttpClient client = new HttpClient("localhost",server.getPort(),"/non-existing");
         assertEquals(404,client.getStatusCode());
@@ -19,7 +19,7 @@ class HttpServerTest {
     @Test
     void ShouldRespondWithRequestTargetIn404() throws IOException {
         //må starte en server som skal få request
-        HttpServer server = new HttpServer(1991);
+        HttpServer server = new HttpServer(1992);
         //client skal connecte til samme server:
         HttpClient client = new HttpClient("localhost",server.getPort(),"/non-existing");
         assertEquals("File not found: /non-existing",client.getMessageBody());
