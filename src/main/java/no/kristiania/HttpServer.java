@@ -52,13 +52,11 @@ public class HttpServer {
 
     public static void main(String[] args) throws IOException {
 
-        /*HTTPCLIENT: Vi fikk verdier fra chrome, som vi parsa, altså leste og tolket
-        (intelliJ er på klientsiden(chrome), kobler til en server via httpbin.org).
+        new HttpServer(1991);
 
-         HTTPSERVER: Nå er det vår jobb å sende de samme verdiene tilbake til chrome(intelliJ er på serversiden, som chrome connectes til).
-         Skriver den enkleste koden som kan få chrome til å vise en tekst-side.
-        */
+        /*
 
+        // Kode før vi lagde handleClients:
         // når vi skal ha en server bruker vi ServerSocket. Den åpner en port på vår pc.
         // Vi er serveren. Vi trenger derfor ikke angi serveren, men porten. Velger 10080.IOEx om porten er tatt fra før.
         ServerSocket serverSocket = new ServerSocket(1990);// skriv i chrome: localhost:8080
@@ -81,6 +79,9 @@ public class HttpServer {
                 "\r\n" +
                 body;
         clientSocket.getOutputStream().write((responseToClient).getBytes()); // må sendes som bytes
+
+            */
+
 
         /* skriver ut headerlinjene som chrome sendte ut.
         String headerLine;
