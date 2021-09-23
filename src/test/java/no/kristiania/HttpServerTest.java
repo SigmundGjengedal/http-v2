@@ -49,7 +49,22 @@ class HttpServerTest {
         // sier til serveren at jeg skal hente den fila, og at jeg da forventer å få innholdet i den  fila.
         HttpClient client = new HttpClient("localhost",server.getPort(),"/example-file.txt");
         assertEquals(fileContent,client.getMessageBody());
+        assertEquals("text/plain",client.getHeader("Content-Type"));
+    }
 
+    @Test
+    void shouldUseFileExtensionForContentType() throws IOException {
+        // lager server og sier til server: se etter filer på disken i denne katalogen
+        HttpServer server = new HttpServer(0);
+        server.setRoot(Paths.get("target/test-classes"));
+        //  lager innhold, og skriver innhold til en fil i den katalogen
+        String fileContent = "<p> Hello</p>";
+        Files.write(Paths.get("target/test-classes/example-file.html"),fileContent.getBytes());
+
+        // sier til serveren at jeg skal hente den fila, og at jeg da forventer å få innholdet i den  fila.
+        HttpClient client = new HttpClient("localhost",server.getPort(),"/example-file.html");
+        // vil at den skal respondere med text/html
+        assertEquals("text/html",client.getHeader("Content-Type"));
 
     }
 }

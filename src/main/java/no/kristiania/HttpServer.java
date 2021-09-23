@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class HttpServer {
 
@@ -34,6 +35,8 @@ public class HttpServer {
             if(requestTarget.equals("/hello")){
                 String responseText ="<p>Hello World</p>";
 
+
+
                 String response = "HTTP/1.1 200 ok\r\n" +
                         "Content-Length: " +responseText.getBytes().length + "\r\n" +
                         "Content-Type: text/html\r\n" +
@@ -46,9 +49,15 @@ public class HttpServer {
                     // finner fila som request target peker til:
                     String responseText = Files.readString(rootDirectory.resolve(requestTarget.substring(1)));
 
+                    // default verdi
+                    String contentType = "text/plain";
+                    // men endres om...
+                    if (requestTarget.endsWith(".html")){
+                        contentType = "text/html";
+                    }
                     String response = "HTTP/1.1 200 ok\r\n" +
                             "Content-Length: " +responseText.getBytes().length + "\r\n" +
-                            "Content-Type: text/html\r\n" +
+                            "Content-Type: " + contentType + "\r\n" +
                             "\r\n"+
                             responseText;
                     //  sender responsen ut fra clientSocket
@@ -70,7 +79,10 @@ public class HttpServer {
 
     public static void main(String[] args) throws IOException {
 
-        new HttpServer(1991);
+        HttpServer httpServer = new HttpServer(1990);
+        // setter et root directory. Velger working directory,der vi er nå,  også kjent som "." Legger index.txt rett i root.
+        httpServer.setRoot(Paths.get("."));
+        // i chrome: localhost:1990/index.txt
 
         /*
 
