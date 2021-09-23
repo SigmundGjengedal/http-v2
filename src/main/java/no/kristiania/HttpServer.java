@@ -32,10 +32,22 @@ public class HttpServer {
 
             // kontrollstuktur på requesTarget:
 
-            if(requestTarget.equals("/hello")){
-                String responseText ="<p>Hello World</p>";
+            int questionPos = requestTarget.indexOf('?');
+            String fileTarget;
+            String query = null;
+            if (questionPos!= -1) { //
+                fileTarget = requestTarget.substring(0,questionPos);
+                query = requestTarget.substring(questionPos+1); // hvis vi har et spørsmålstegn, har vi en query
+            } else {
+                fileTarget = requestTarget;
+            }
 
-
+            if(fileTarget.equals("/hello")){
+                String yourName = "world";
+                if (query != null){
+                    yourName = query.split("=")[1]; // henter ut navn fra input
+                }
+                String responseText ="<p>Hello "+ yourName+ "</p>";
 
                 String response = "HTTP/1.1 200 ok\r\n" +
                         "Content-Length: " +responseText.getBytes().length + "\r\n" +
@@ -80,9 +92,9 @@ public class HttpServer {
     public static void main(String[] args) throws IOException {
 
         HttpServer httpServer = new HttpServer(1990);
-        // setter et root directory. Velger working directory,der vi er nå,  også kjent som "." Legger index.txt rett i root.
+        // setter et root directory. Velger working directory,der vi er nå,  også kjent som "." Legger index.html rett i root.
         httpServer.setRoot(Paths.get("."));
-        // i chrome: localhost:1990/index.txt
+        // i chrome: localhost:1990/index.html
 
         /*
 

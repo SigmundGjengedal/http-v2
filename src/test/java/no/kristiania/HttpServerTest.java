@@ -38,6 +38,13 @@ class HttpServerTest {
     }
 
     @Test
+    void shouldEchoQueryParameter() throws IOException {
+        HttpServer server = new HttpServer(0);
+        HttpClient client = new HttpClient("localhost",server.getPort(),"/hello?yourName=geir");
+        assertEquals("<p>Hello geir</p>", client.getMessageBody());
+    }
+
+    @Test
     void shouldServeFiles() throws IOException {
         // lager server og sier til server: se etter filer på disken i denne katalogen
         HttpServer server = new HttpServer(0);
@@ -67,4 +74,6 @@ class HttpServerTest {
         assertEquals("text/html",client.getHeader("Content-Type"));
 
     }
+
+
 }
