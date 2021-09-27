@@ -43,7 +43,7 @@ public class HttpServer {
             }
 
             if(fileTarget.equals("/hello")){
-                String yourName = "world";
+                String yourName = "World";
                 if (query != null){
                     yourName = query.split("=")[1]; // henter ut navn fra input
                 }
@@ -106,7 +106,7 @@ public class HttpServer {
         // nå må vi ventet på svar klientetn, vi får vi tilbake noe(et socket object lik det klienten sendte), det må vi akseptere:
         Socket clientSocket = serverSocket.accept();
 
-        // 1: Vi kan ta input: leser den første linja fra server,som er requestlinen fra chrome
+        // 1: Vi kan ta input: leser den første linja fra klienten,som er requestlinen fra chrome
         String requestLine = HttpClient.readLine(clientSocket);
         System.out.println(requestLine);
 

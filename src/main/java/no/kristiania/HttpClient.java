@@ -46,7 +46,7 @@ public class HttpClient {
 
     //********************************* hjelpemetoder(HM)
 
-    // leser hele body
+    // ****leser hele body
     private String readBytes(Socket socket, int contentLength) throws IOException {
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < contentLength; i++) {
@@ -55,7 +55,8 @@ public class HttpClient {
         return buffer.toString();
     }
 
-    // Leser en linje i response headers(input). Første er status line (f.eks "HTTP/1.1 200 OK").
+    // *****Leser en linje i response headers(input).
+    // Første er status line (f.eks "HTTP/1.1 200 OK").
     // Skal den lese flere linjer må den settes i en while der den kalles.
     static String readLine(Socket socket) throws IOException {
         StringBuilder result = new StringBuilder();
