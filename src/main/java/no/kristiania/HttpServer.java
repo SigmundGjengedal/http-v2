@@ -36,30 +36,32 @@ public class HttpServer {
         Socket clientSocket = serverSocket.accept();
         // må lese requestline
         String[] requestLine = HttpClient.readLine(clientSocket).split(" ");
-        // henter ut requestTarget fra requestLine
+        // henter ut hele requestTarget fra requestLine
         String requestTarget = requestLine[1];
 
-        // kontrollstuktur på requesTarget:
+        // splitter requestTarget i fileTarget og query
         int questionPos = requestTarget.indexOf('?');
-        String fileTarget;
+        String fileTarget; // skal deles i filetarget og query
         String query = null;
-        if (questionPos!= -1) { //
+        if (questionPos!= -1) { //  om vi har query
             fileTarget = requestTarget.substring(0,questionPos);
-            query = requestTarget.substring(questionPos+1); // hvis vi har et spørsmålstegn, har vi en query
-        } else {
+            query = requestTarget.substring(questionPos+1); // hvis vi har et spørsmålstegn, har vi en query med name og value.
+        } else { // om vi ikke har query.
             fileTarget = requestTarget;
         }
 
+        // kontrollstuktur iht hva fileTarget og query er:
         if(fileTarget.equals("/hello")){
             String yourName = "World";
             if (query != null){
-                yourName = query.split("=")[1]; // henter ut navn fra input
+                yourName = query.split("=")[1]; // henter ut value fra input
             }
+            // lager svar til klienten for filetarget = "/hello":
             String responseText ="<p>Hello "+ yourName+ "</p>";
-
             String response = "HTTP/1.1 200 ok\r\n" +
                     "Content-Length: " +responseText.getBytes().length + "\r\n" +
                     "Content-Type: text/html\r\n" +
+                    "Connection: close\r\n" +
                     "\r\n"+
                     responseText;
             clientSocket.getOutputStream().write(response.getBytes());
