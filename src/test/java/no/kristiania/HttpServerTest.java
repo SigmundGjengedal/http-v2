@@ -38,6 +38,16 @@ class HttpServerTest {
     }
 
     @Test
+    void shouldHandleMoreThanOneRequests() throws IOException {
+        HttpServer server = new HttpServer(0);
+        assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello").getStatusCode());
+        assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello").getStatusCode());
+
+
+
+    }
+
+    @Test
     void shouldEchoQueryParameter() throws IOException {
         HttpServer server = new HttpServer(0);
         HttpClient client = new HttpClient("localhost",server.getPort(),"/hello?yourName=geir");
