@@ -80,6 +80,7 @@ public class HttpServer {
                 String response = "HTTP/1.1 200 ok\r\n" +
                         "Content-Length: " +responseText.getBytes().length + "\r\n" +
                         "Content-Type: " + contentType + "\r\n" +
+                        "Connection: close\r\n" +
                         "\r\n"+
                         responseText;
                 //  sender responsen ut fra clientSocket
@@ -90,6 +91,7 @@ public class HttpServer {
 
             String response = "HTTP/1.1 404 Not found\r\n" +
                     "Content-Length: " + responseText.length() + "\r\n" +
+                    "Connection: close\r\n" +
                     "\r\n" +
                     responseText;
             clientSocket.getOutputStream().write(response.getBytes());

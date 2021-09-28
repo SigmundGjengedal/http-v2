@@ -9,7 +9,7 @@
    - extracta handleclients,i server. Satt den i en whileløkke med true.
 
 * [] feilhåndtering når vi har en aktiv server
-    - må lukke connection til socket. må sette connection: close i response
+    - må lukke connection til socket. må sette "connection: close" i alle response
       slik at chrome lukker socket og åpner en ny for hver request.
 
 * [] refactor -> httpMessage class
