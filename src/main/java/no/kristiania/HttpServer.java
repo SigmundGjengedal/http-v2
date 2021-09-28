@@ -19,7 +19,7 @@ public class HttpServer {
         new Thread(this::handleClients).start();
     }
 
-    // leser fra klients connection,  og svarer den med 404 not found
+    // leser fra klients connection,  og svarer den med riktig response.
     private void handleClients(){
 
         try {
