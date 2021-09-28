@@ -22,70 +22,75 @@ public class HttpServer {
     // leser fra klients connection,  og svarer den med 404 not found
     private void handleClients(){
 
-        try { // venter på svar
-            // må accepte: settes til clientSocket. kobler altså outputten fra server til inputten til client:
-            Socket clientSocket = serverSocket.accept();
-            // må lese requestline
-            String[] requestLine = HttpClient.readLine(clientSocket).split(" ");
-            // henter ut requestTarget fra requestLine
-            String requestTarget = requestLine[1];
-
-            // kontrollstuktur på requesTarget:
-
-            int questionPos = requestTarget.indexOf('?');
-            String fileTarget;
-            String query = null;
-            if (questionPos!= -1) { //
-                fileTarget = requestTarget.substring(0,questionPos);
-                query = requestTarget.substring(questionPos+1); // hvis vi har et spørsmålstegn, har vi en query
-            } else {
-                fileTarget = requestTarget;
-            }
-
-            if(fileTarget.equals("/hello")){
-                String yourName = "World";
-                if (query != null){
-                    yourName = query.split("=")[1]; // henter ut navn fra input
-                }
-                String responseText ="<p>Hello "+ yourName+ "</p>";
-
-                String response = "HTTP/1.1 200 ok\r\n" +
-                        "Content-Length: " +responseText.getBytes().length + "\r\n" +
-                        "Content-Type: text/html\r\n" +
-                        "\r\n"+
-                        responseText;
-                clientSocket.getOutputStream().write(response.getBytes());
-            }else{
-
-                if (rootDirectory!= null &&  Files.exists(rootDirectory.resolve(requestTarget.substring(1)))){
-                    // finner fila som request target peker til:
-                    String responseText = Files.readString(rootDirectory.resolve(requestTarget.substring(1)));
-
-                    // default verdi
-                    String contentType = "text/plain";
-                    // men endres om...
-                    if (requestTarget.endsWith(".html")){
-                        contentType = "text/html";
-                    }
-                    String response = "HTTP/1.1 200 ok\r\n" +
-                            "Content-Length: " +responseText.getBytes().length + "\r\n" +
-                            "Content-Type: " + contentType + "\r\n" +
-                            "\r\n"+
-                            responseText;
-                    //  sender responsen ut fra clientSocket
-                    clientSocket.getOutputStream().write(response.getBytes());
-                    return;
-                }
-                String responseText = "File not found: " + requestTarget;
-
-                String response = "HTTP/1.1 404 Not found\r\n" +
-                        "Content-Length: " + responseText.length() + "\r\n" +
-                        "\r\n" +
-                        responseText;
-                clientSocket.getOutputStream().write(response.getBytes());
+        try {
+            while(true){
+              handleClient();
             }
         }catch(IOException e){
             e.printStackTrace();
+        }
+    }
+
+    private void handleClient() throws IOException {
+        // må accepte request fra client: kobler altså outputten fra client, til inputten til servere:
+        Socket clientSocket = serverSocket.accept();
+        // må lese requestline
+        String[] requestLine = HttpClient.readLine(clientSocket).split(" ");
+        // henter ut requestTarget fra requestLine
+        String requestTarget = requestLine[1];
+
+        // kontrollstuktur på requesTarget:
+        int questionPos = requestTarget.indexOf('?');
+        String fileTarget;
+        String query = null;
+        if (questionPos!= -1) { //
+            fileTarget = requestTarget.substring(0,questionPos);
+            query = requestTarget.substring(questionPos+1); // hvis vi har et spørsmålstegn, har vi en query
+        } else {
+            fileTarget = requestTarget;
+        }
+
+        if(fileTarget.equals("/hello")){
+            String yourName = "World";
+            if (query != null){
+                yourName = query.split("=")[1]; // henter ut navn fra input
+            }
+            String responseText ="<p>Hello "+ yourName+ "</p>";
+
+            String response = "HTTP/1.1 200 ok\r\n" +
+                    "Content-Length: " +responseText.getBytes().length + "\r\n" +
+                    "Content-Type: text/html\r\n" +
+                    "\r\n"+
+                    responseText;
+            clientSocket.getOutputStream().write(response.getBytes());
+        }else{
+
+            if (rootDirectory!= null &&  Files.exists(rootDirectory.resolve(requestTarget.substring(1)))){
+                // finner fila som request target peker til:
+                String responseText = Files.readString(rootDirectory.resolve(requestTarget.substring(1)));
+
+                // default verdi
+                String contentType = "text/plain";
+                // men endres om...
+                if (requestTarget.endsWith(".html")){
+                    contentType = "text/html";
+                }
+                String response = "HTTP/1.1 200 ok\r\n" +
+                        "Content-Length: " +responseText.getBytes().length + "\r\n" +
+                        "Content-Type: " + contentType + "\r\n" +
+                        "\r\n"+
+                        responseText;
+                //  sender responsen ut fra clientSocket
+                clientSocket.getOutputStream().write(response.getBytes());
+                return;
+            }
+            String responseText = "File not found: " + requestTarget;
+
+            String response = "HTTP/1.1 404 Not found\r\n" +
+                    "Content-Length: " + responseText.length() + "\r\n" +
+                    "\r\n" +
+                    responseText;
+            clientSocket.getOutputStream().write(response.getBytes());
         }
     }
 
