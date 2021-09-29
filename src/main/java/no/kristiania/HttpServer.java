@@ -61,13 +61,8 @@ public class HttpServer {
             }
             // lager svar til klienten for filetarget = "/hello":
             String responseText = "<p>Hello " + yourName + "</p>";
-            String response = "HTTP/1.1 200 ok\r\n" +
-                    "Content-Length: " + responseText.getBytes().length + "\r\n" +
-                    "Content-Type: text/html\r\n" +
-                    "Connection: close\r\n" +
-                    "\r\n" +
-                    responseText;
-            clientSocket.getOutputStream().write(response.getBytes());
+            writeOkResponse(clientSocket, responseText, "text/html");
+
         } else if (fileTarget.equals("/api/roleOptions")) {
             String responseText = "";
 
@@ -75,34 +70,20 @@ public class HttpServer {
             for(String role : roles){
                 responseText += "<option value=" +(value++) +">" + role + "</option>";
             }
+            writeOkResponse(clientSocket, responseText, "text/html");
 
-            String response = "HTTP/1.1 200 ok\r\n" +
-                    "Content-Length: " + responseText.getBytes().length + "\r\n" +
-                    "Content-Type: text/html\r\n" +
-                    "Connection: close\r\n" +
-                    "\r\n" +
-                    responseText;
-            clientSocket.getOutputStream().write(response.getBytes());
         }else{
 
             if (rootDirectory!= null &&  Files.exists(rootDirectory.resolve(requestTarget.substring(1)))){
                 // finner fila som request target peker til:
                 String responseText = Files.readString(rootDirectory.resolve(requestTarget.substring(1)));
-
                 // default verdi
                 String contentType = "text/plain";
                 // men endres om...
                 if (requestTarget.endsWith(".html")){
                     contentType = "text/html";
                 }
-                String response = "HTTP/1.1 200 ok\r\n" +
-                        "Content-Length: " +responseText.getBytes().length + "\r\n" +
-                        "Content-Type: " + contentType + "\r\n" +
-                        "Connection: close\r\n" +
-                        "\r\n"+
-                        responseText;
-                //  sender responsen ut fra clientSocket
-                clientSocket.getOutputStream().write(response.getBytes());
+                writeOkResponse(clientSocket, responseText, contentType);
                 return;
             }
             String responseText = "File not found: " + requestTarget;
@@ -114,6 +95,17 @@ public class HttpServer {
                     responseText;
             clientSocket.getOutputStream().write(response.getBytes());
         }
+    }
+
+    private void writeOkResponse(Socket clientSocket, String responseText, String contentType) throws IOException {
+        String response = "HTTP/1.1 200 ok\r\n" +
+                "Content-Length: " + responseText.getBytes().length + "\r\n" +
+                "Content-Type: " + contentType + "\r\n" +
+                "Connection: close\r\n" +
+                "\r\n" +
+                responseText;
+        //  sender responsen ut fra clientSocket
+        clientSocket.getOutputStream().write(response.getBytes());
     }
 
     public static void main(String[] args) throws IOException {
