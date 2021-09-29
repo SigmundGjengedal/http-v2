@@ -18,33 +18,34 @@ public class HttpServer {
     private List<String> roles = new ArrayList<>();
 
     public HttpServer(int serverPort) throws IOException {
-        // må lytte til en severSocket:
+        // må lytte til en severSocket på samme port som clienten:
         serverSocket = new ServerSocket(serverPort);
         // i en separat tråd, kjør handleClients
         new Thread(this::handleClients).start();
     }
 
-    // leser fra klients connection,  og svarer den med riktig response.
+    // leser fra klients connection(requesline), og responderer etter å ha tolket requestline. Bruker hjelpemetode handleClient()
     private void handleClients(){
 
         try {
-            while(true){
+            while(true){ // evig. Er for å holde serveren oppe.
               handleClient();
             }
-        }catch(IOException e){
+        }catch(IOException e){ // om noe går galt på nettverket, f.eks ugyldig host.
             e.printStackTrace();
         }
     }
 
+    // parser request fra client: Ser foreløpig kun på første linje, altså requestline.
     private void handleClient() throws IOException {
         // må accepte request fra client: kobler altså outputten fra client, til inputten til servere:
         Socket clientSocket = serverSocket.accept();
-        // må lese requestline
+        // må lese requestline. Bruker readline uten while, da blir det bare en linje. Splitter på mellomrom, og lagrer i et array.
         String[] requestLine = HttpClient.readLine(clientSocket).split(" ");
-        // henter ut hele requestTarget fra requestLine
-        String requestTarget = requestLine[1];
+        // henter ut hele requestTarget fra requestLine.
+        String requestTarget = requestLine[1];// requestline =  [HTTP-METHOD, requestTarget, HTTP-PROTOCOL]
 
-        // splitter hele requestTarget i fileTarget og query
+        // splitter requestTarget i fileTarget og query
         int questionPos = requestTarget.indexOf('?');
         String fileTarget; // skal deles i filetarget og query
         String query = null;
@@ -102,7 +103,7 @@ public class HttpServer {
     }
 
     private Map<String, String> parseRequestParameters(String query) {
-        // parser ut queryParameterene. Splitter på & tegnet og finner forskjellig.
+        // parser ut queryParameterene. De som gir fornavn og etternavn. Splitter på & tegnet og finner forskjellig.
         Map<String, String> queryMap = new HashMap<>();
         for (String queryParameter : query.split("&")) {
             int equalsPos = queryParameter.indexOf('=');

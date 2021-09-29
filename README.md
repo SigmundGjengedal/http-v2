@@ -3,7 +3,8 @@
 ## lecture 6
 * [] styling
   - legger til style.css
-   - fjerner doctype linja øverst  
+    -sette rootdir i main for å angi html fila.
+   - fjerner doctype linja øverst i html dokument!
    -  
 * [] handle more than one client
    - lagde test med to httpclienter
@@ -14,6 +15,7 @@
       slik at chrome lukker socket og åpner en ny for hver request.
 
 * [] refactor -> httpMessage class
+  - DRY : extract methods, spesielt den som gir 200 respons.Og den som parser query.
 
 * [] process POST requests from form  
     - (method = “post” i form index.html

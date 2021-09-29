@@ -2,15 +2,14 @@ package no.kristiania;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpClient {
-    //********************************** fields
+    //********************************** fields. Disse tilhører det klienten får tilbake fra server.
     private final int statusCode;
     private final Map<String, String> headerFields = new HashMap<>();
-    private String messageBody;
+    private String messageBody; // ikke optional!
 
     //************************************* constructor
     public HttpClient(String host , int port, String requestTarget) throws IOException {
@@ -25,12 +24,12 @@ public class HttpClient {
         // sender den til server, som output fra klient. Sender stringen som bytes
         socket1.getOutputStream().write(request.getBytes());
 
-        //Skal lese statuskode: HM ReadLine gir oss tilbake hele status line. Den består av tre deler.
+        //Skal lese statuskode fra server: HM ReadLine gir oss tilbake hele status line. Den består av tre deler.
         // Vi er bare interessert i statuscoden(f.eks 200).
         String[] statusLine = readLine(socket1).split(" ");
         this.statusCode = Integer.parseInt(statusLine[1]);
 
-        // skal lese flere Headerlines. Lagrer Field og value i hashmap
+        // skal parse Headerlines fra server. altså det før body. Lagrer Field og value i hashmap
         String headerLine;
         while (!(headerLine = readLine(socket1)) .isBlank()){ // ved blank linje er headers ferdig, da kommer body.
               int colonPos = headerLine.indexOf(":");
@@ -39,15 +38,14 @@ public class HttpClient {
               headerFields.put(headerField,headerValue);  // lagres i hashmap
         }
 
-
-        // skal lese hele body, ikke bare linjer: Setter den lik HM readBytes()
-        this.messageBody = readBytes(socket1, getContentLength());
+        // skal lese hele body som kommer etter headere. Bruker readBytes()
+        this.messageBody = readBodyBytes(socket1, getContentLength());
     }// end of constructor
 
     //********************************* hjelpemetoder(HM)
 
-    // ****leser hele body
-    private String readBytes(Socket socket, int contentLength) throws IOException {
+    // ****leser hele body, som kommer fra responsen til server. Husk at vi alltid har body i http response.
+    private String readBodyBytes(Socket socket, int contentLength) throws IOException {
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < contentLength; i++) {
             buffer.append((char)socket.getInputStream().read());
@@ -72,7 +70,7 @@ public class HttpClient {
     }
 
 
-    //************************************** gettere
+    //************************************** gettere : henter ulike deler av respons fra server.
     public int getStatusCode() {
         return statusCode;
     }
