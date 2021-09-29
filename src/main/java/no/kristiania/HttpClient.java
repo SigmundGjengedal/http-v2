@@ -31,6 +31,8 @@ public class HttpClient {
 
         // **************  leser respons **************
 
+
+
         //Skal lese statuskode fra server: HelpMethod ReadLine gir oss tilbake hele status line. Den består av tre deler splittet av mellomrom.
         String[] statusLineSplitted = readLine(socket1).split(" "); // [protocol, statuscode, statusmessage]
         this.statusCode = Integer.parseInt(statusLineSplitted[1]);    // Vi er bare interessert i statuscoden(f.eks 200).
