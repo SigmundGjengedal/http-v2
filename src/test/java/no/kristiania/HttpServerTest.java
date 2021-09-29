@@ -114,7 +114,7 @@ class HttpServerTest {
         );
         assertEquals(200,postClient.getStatusCode());
         Person person = server.getPeople().get(0);
-        assertEquals("Sigmund", person.getFirstName());
+        assertEquals("Test", person.getFirstName());
     }
 
 }

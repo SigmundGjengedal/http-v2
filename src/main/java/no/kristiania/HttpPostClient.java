@@ -12,10 +12,12 @@ public class HttpPostClient {
         // Må ha socket for å connecte til server. Connecter socket til host og port som angitt.
         Socket socket1 = new Socket(host,port);
         // Skal skrive en http-request(en string). Requestline + to første linjene i Request Headers
-        String request = "GET " + requestTarget + " HTTP/1.1\r\n" +
+        String request = "POST " + requestTarget + " HTTP/1.1\r\n" +
                 "Host: " + host + "\r\n" +
                 "Connection: close\r\n" +
-                "\r\n";
+                "Content-Length: " + contentBody.length() + "\r\n" +
+                "\r\n"+
+                contentBody;
         // sender den til server, som output fra klient. Sender stringen som bytes
         socket1.getOutputStream().write(request.getBytes());
         // **************  leser respons **************

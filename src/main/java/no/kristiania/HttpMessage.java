@@ -15,8 +15,11 @@ public class HttpMessage {
          startLine = HttpMessage.readLine(socket);
          // leser headers
          readHeaders(socket);
-         // skal lese hele body som kommer etter headere. Bruker readBytes()
-         messageBody = HttpMessage.readBodyBytes(socket, getContentLength());
+         // Dersom request har body(altså en post request), så må vi parse den. Det har den visst vi har content-length i header. Da skal vi lese hele body som kommer etter headere. Bruker readBodyBytes()
+         if(headerFields.containsKey("Content-Length")) {
+            messageBody = HttpMessage.readBodyBytes(socket, getContentLength());
+        }
+
     }
     //********************************* klassemetoder *************
 

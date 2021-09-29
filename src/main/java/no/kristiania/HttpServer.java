@@ -16,7 +16,7 @@ public class HttpServer {
     private final ServerSocket serverSocket;
     private Path rootDirectory;
     private List<String> roles = new ArrayList<>();
-    private List<Person> people;
+    private List<Person> people = new ArrayList<>();
 
     public HttpServer(int serverPort) throws IOException {
         // må lytte til en severSocket på samme port som clienten:
@@ -41,8 +41,11 @@ public class HttpServer {
     private void handleClient() throws IOException {
         // må accepte request fra client: kobler altså outputten fra client, til inputten til servere:
         Socket clientSocket = serverSocket.accept();
+
+        // må parse hele HTTPmessagen.
+        HttpMessage httpMessage = new HttpMessage(clientSocket);
         // må lese requestline. Bruker readline uten while, da blir det bare en linje. Splitter på mellomrom, og lagrer i et array.
-        String[] requestLine = HttpMessage.readLine(clientSocket).split(" ");
+        String[] requestLine = httpMessage.startLine.split(" ");
         // henter ut hele requestTarget fra requestLine.
         String requestTarget = requestLine[1];// requestline =  [HTTP-METHOD, requestTarget, HTTP-PROTOCOL]
 
@@ -68,6 +71,13 @@ public class HttpServer {
             // lager svar til klienten for filetarget = "/hello":
             String responseText = "<p>Hello " + yourName + "</p>";
             writeOkResponse(clientSocket, responseText, "text/html");
+
+        } else if (fileTarget.equals("/api/newPerson")) {
+            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
+            Person person = new Person();
+            person.setFirstName(queryMap.get("firstName"));
+            people.add(person);
+            writeOkResponse(clientSocket,"it is done", "text/html");
 
         } else if (fileTarget.equals("/api/roleOptions")) {
             String responseText = "";
@@ -134,42 +144,6 @@ public class HttpServer {
         // hvor vi finner rollene
         httpServer.setRoles(List.of("Student", "Teaching assistant","Teacher"));
 
-
-
-        /*
-
-        // Kode før vi lagde handleClients:
-        // når vi skal ha en server bruker vi ServerSocket. Den åpner en port på vår pc.
-        // Vi er serveren. Vi trenger derfor ikke angi serveren, men porten. Velger 10080.IOEx om porten er tatt fra før.
-        ServerSocket serverSocket = new ServerSocket(1990);// skriv i chrome: localhost:8080
-
-        // nå må vi ventet på svar klientetn, vi får vi tilbake noe(et socket object lik det klienten sendte), det må vi akseptere:
-        Socket clientSocket = serverSocket.accept();
-
-        // 1: Vi kan ta input: leser den første linja fra klienten,som er requestlinen fra chrome
-        String requestLine = HttpClient.readLine(clientSocket);
-        System.out.println(requestLine);
-
-        // 2: kan gi output. Sender en http-respons til chrome
-        String body = "<h1> Hello World !!!</h1>";
-        String contentType = "text/html; charset=utf-8";
-
-        String responseToClient =  "HTTP/1.1 200 OK\r\n"+
-                "Content-Length: " + body.getBytes().length +"\r\n" +
-                "Content type: "+ contentType+"\r\n"+
-                "Connection: close\r\n"+
-                "\r\n" +
-                body;
-        clientSocket.getOutputStream().write((responseToClient).getBytes()); // må sendes som bytes
-
-            */
-
-
-        /* skriver ut headerlinjene som chrome sendte ut.
-        String headerLine;
-        while(!(headerLine = HttpClient.readLine(clientSocket)).isBlank()) {
-            System.out.println(headerLine);
-        }*/
     }
 
     public int getPort() {
