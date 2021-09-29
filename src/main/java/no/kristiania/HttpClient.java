@@ -13,6 +13,9 @@ public class HttpClient {
 
     //************************************* constructor
     public HttpClient(String host , int port, String requestTarget) throws IOException {
+
+        // **************   sender request **************
+
         // Må ha socket for å connecte til server. Connecter til host og port som angitt.
         Socket socket1 = new Socket(host,port);
 
@@ -24,10 +27,12 @@ public class HttpClient {
         // sender den til server, som output fra klient. Sender stringen som bytes
         socket1.getOutputStream().write(request.getBytes());
 
-        //Skal lese statuskode fra server: HM ReadLine gir oss tilbake hele status line. Den består av tre deler.
-        // Vi er bare interessert i statuscoden(f.eks 200).
-        String[] statusLine = readLine(socket1).split(" ");
-        this.statusCode = Integer.parseInt(statusLine[1]);
+
+        // **************  leser respons **************
+
+        //Skal lese statuskode fra server: HelpMethod ReadLine gir oss tilbake hele status line. Den består av tre deler splittet av mellomrom.
+        String[] statusLine = readLine(socket1).split(" "); // [protocol, statuscode, statusmessage]
+        this.statusCode = Integer.parseInt(statusLine[1]);    // Vi er bare interessert i statuscoden(f.eks 200).
 
         // skal parse Headerlines fra server. altså det før body. Lagrer Field og value i hashmap
         String headerLine;
