@@ -41,7 +41,7 @@ public class HttpServer {
         // må accepte request fra client: kobler altså outputten fra client, til inputten til servere:
         Socket clientSocket = serverSocket.accept();
         // må lese requestline. Bruker readline uten while, da blir det bare en linje. Splitter på mellomrom, og lagrer i et array.
-        String[] requestLine = HttpClient.readLine(clientSocket).split(" ");
+        String[] requestLine = HttpMessage.readLine(clientSocket).split(" ");
         // henter ut hele requestTarget fra requestLine.
         String requestTarget = requestLine[1];// requestline =  [HTTP-METHOD, requestTarget, HTTP-PROTOCOL]
 
