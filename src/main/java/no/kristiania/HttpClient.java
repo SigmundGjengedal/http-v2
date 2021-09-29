@@ -10,6 +10,7 @@ public class HttpClient {
     private final int statusCode;
     private final Map<String, String> headerFields = new HashMap<>();
     private String messageBody; // ikke optional!
+    private HttpMessage httpMessage;
 
     //************************************* constructor
     public HttpClient(String host , int port, String requestTarget) throws IOException {
@@ -31,8 +32,8 @@ public class HttpClient {
         // **************  leser respons **************
 
         //Skal lese statuskode fra server: HelpMethod ReadLine gir oss tilbake hele status line. Den består av tre deler splittet av mellomrom.
-        String[] statusLine = readLine(socket1).split(" "); // [protocol, statuscode, statusmessage]
-        this.statusCode = Integer.parseInt(statusLine[1]);    // Vi er bare interessert i statuscoden(f.eks 200).
+        String[] statusLineSplitted = readLine(socket1).split(" "); // [protocol, statuscode, statusmessage]
+        this.statusCode = Integer.parseInt(statusLineSplitted[1]);    // Vi er bare interessert i statuscoden(f.eks 200).
 
         // skal parse Headerlines fra server. altså det før body. Lagrer Field og value i hashmap
         String headerLine;
