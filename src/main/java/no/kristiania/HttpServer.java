@@ -54,18 +54,33 @@ public class HttpServer {
         }
 
         // kontrollstuktur iht hva fileTarget og query er:
-        if(fileTarget.equals("/hello")){
+        if(fileTarget.equals("/hello")) {
             String yourName = "World";
-            if (query != null){
+            if (query != null) {
                 yourName = query.split("=")[1]; // henter ut value fra input
             }
             // lager svar til klienten for filetarget = "/hello":
-            String responseText ="<p>Hello "+ yourName+ "</p>";
+            String responseText = "<p>Hello " + yourName + "</p>";
             String response = "HTTP/1.1 200 ok\r\n" +
-                    "Content-Length: " +responseText.getBytes().length + "\r\n" +
+                    "Content-Length: " + responseText.getBytes().length + "\r\n" +
                     "Content-Type: text/html\r\n" +
                     "Connection: close\r\n" +
-                    "\r\n"+
+                    "\r\n" +
+                    responseText;
+            clientSocket.getOutputStream().write(response.getBytes());
+        } else if (fileTarget.equals("/api/roleOptions")) {
+            String responseText = "";
+
+            int value = 1;
+            for(String role : roles){
+                responseText += "<option value=" +(value++) +">" + role + "</option>";
+            }
+
+            String response = "HTTP/1.1 200 ok\r\n" +
+                    "Content-Length: " + responseText.getBytes().length + "\r\n" +
+                    "Content-Type: text/html\r\n" +
+                    "Connection: close\r\n" +
+                    "\r\n" +
                     responseText;
             clientSocket.getOutputStream().write(response.getBytes());
         }else{

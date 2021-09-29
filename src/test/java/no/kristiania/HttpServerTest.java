@@ -94,7 +94,7 @@ class HttpServerTest {
 
         HttpClient client = new HttpClient("localhost",server.getPort(),"/api/roleOptions");
         assertEquals(
-            "<option value=1> Teacher</option><option value=2>Student</option>",
+            "<option value=1>Teacher</option><option value=2>Student</option>",
                 client.getMessageBody()
                 );
     }
