@@ -21,10 +21,14 @@
 </body>
 
 <script>
-    fetch("api/)
+    fetch("api/roleOptions").then(function (res) {
+        return res.text();
+    }).then(function(text) {
+         document.getElementById("roles").innerHTML = text;
+    });
 
 
-    document.getElementById("roles").innerHTML = "<option>Student</option><option>Teacher</option>"
+
 </script>
 
 </html>
