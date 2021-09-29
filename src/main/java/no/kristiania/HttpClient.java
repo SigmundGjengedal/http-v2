@@ -8,8 +8,6 @@ import java.util.Map;
 public class HttpClient {
     //********************************** fields. Disse tilhører det klienten får tilbake fra server.
     private final int statusCode;
-    private String messageBody; // ikke optional!
-
     private HttpMessage httpMessage;
 
     //************************************* constructor
@@ -36,23 +34,12 @@ public class HttpClient {
         String[] statusLineSplitted = httpMessage.startLine.split(" "); // [protocol, statuscode, statusmessage]
         this.statusCode = Integer.parseInt(statusLineSplitted[1]);    // Vi er bare interessert i statuscoden(f.eks 200).
         // leser headers
-        readHeaders(socket1);
+
         // skal lese hele body som kommer etter headere. Bruker readBytes()
-        this.messageBody = readBodyBytes(socket1, getContentLength());
+        HttpMessage.messageBody = readBodyBytes(socket1, getContentLength());
     }// end of constructor
 
-    //********************************* hjelpemetoder(HM)
-    private void readHeaders(Socket socket1) throws IOException {
-        // skal parse Headerlines fra server. altså det før body. Lagrer Field og value i hashmap
-        String headerLine;
-        while (!(headerLine = HttpMessage.readLine(socket1)) .isBlank()){ // ved blank linje er headers ferdig, da kommer body.
-              int colonPos = headerLine.indexOf(":");
-              String headerField = headerLine.substring(0,colonPos);
-              String headerValue = headerLine.substring(colonPos+1).trim(); // trim fjerner WS fra begge sider.
-              httpMessage.headerFields.put(headerField,headerValue);  // lagres i hashmap
 
-        }
-    }
 
 
 
@@ -81,6 +68,6 @@ public class HttpClient {
     }
 
     public String getMessageBody() {
-        return messageBody;
+        return httpMessage.messageBody;
     }
 }

@@ -6,11 +6,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpMessage {
+    public static String messageBody;
     public String startLine;
     public final Map<String, String> headerFields = new HashMap<>();
 
     public HttpMessage(Socket socket) throws IOException {
      startLine = HttpMessage.readLine(socket);
+     readHeaders(socket);
+    }
+
+
+    //********************************* klassemetoder
+
+    private void readHeaders(Socket socket) throws IOException {
+        // skal parse Headerlines fra server. altså det før body. Lagrer Field og value i hashmap
+        String headerLine;
+        while (!(headerLine = HttpMessage.readLine(socket) ).isBlank() ){ // ved blank linje er headers ferdig, da kommer body.
+            int colonPos = headerLine.indexOf(":");
+            String headerField = headerLine.substring(0,colonPos);
+            String headerValue = headerLine.substring(colonPos+1).trim(); // trim fjerner WS fra begge sider.
+            headerFields.put(headerField,headerValue);  // lagres i hashmap
+
+        }
     }
 
     // ***** readLine: Leser en linje i response headers(input).
@@ -29,3 +46,7 @@ public class HttpMessage {
         return result.toString();
     }
 }
+
+
+
+
