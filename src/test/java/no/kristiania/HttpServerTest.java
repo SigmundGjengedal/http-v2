@@ -58,7 +58,8 @@ class HttpServerTest {
         HttpClient client = new HttpClient(
                 "localhost",
                 server.getPort(),
-                "/hello?firstName=Test&lastName=Gjengedal");
+                "/hello?firstName=Test&lastName=Gjengedal"
+        );
         assertEquals("<p>Hello Gjengedal,Test</p>", client.getMessageBody());
     }
 
