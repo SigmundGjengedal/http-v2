@@ -10,7 +10,6 @@ public class HttpClient {
     private final int statusCode;
     private final Map<String, String> headerFields = new HashMap<>();
     private String messageBody; // ikke optional!
-    private HttpMessage httpMessage;
 
     //************************************* constructor
     public HttpClient(String host , int port, String requestTarget) throws IOException {
@@ -30,7 +29,6 @@ public class HttpClient {
 
 
         // **************  leser respons **************
-
 
 
         //Skal lese statuskode fra server: HelpMethod ReadLine gir oss tilbake hele status line. Den består av tre deler splittet av mellomrom.
