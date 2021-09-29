@@ -7,7 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HttpServer {
 
@@ -42,7 +44,7 @@ public class HttpServer {
         // henter ut hele requestTarget fra requestLine
         String requestTarget = requestLine[1];
 
-        // splitter requestTarget i fileTarget og query
+        // splitter hele requestTarget i fileTarget og query
         int questionPos = requestTarget.indexOf('?');
         String fileTarget; // skal deles i filetarget og query
         String query = null;
@@ -53,11 +55,20 @@ public class HttpServer {
             fileTarget = requestTarget;
         }
 
-        // kontrollstuktur iht hva fileTarget og query er:
+        // kontrollstuktur iht hva fileTarget og query ble i forrige steg:
         if(fileTarget.equals("/hello")) {
             String yourName = "World";
             if (query != null) {
-                yourName = query.split("=")[1]; // henter ut value fra input
+                // parser ut queryParameterene
+                Map<String, String> queryMap = new HashMap<>();
+                for (String queryParameter : query.split("&")) {
+                    int equalsPos = queryParameter.indexOf('=');
+                    String parameterName = queryParameter.substring(0,equalsPos);
+                    String parameterValue = queryParameter.substring(equalsPos +1);
+                    queryMap.put(parameterName,parameterValue);
+                }
+                // henter ut noen av variablene
+                yourName = queryMap.get("lastName") + ", " + queryMap.get("firstName");
             }
             // lager svar til klienten for filetarget = "/hello":
             String responseText = "<p>Hello " + yourName + "</p>";

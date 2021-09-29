@@ -60,7 +60,7 @@ class HttpServerTest {
                 server.getPort(),
                 "/hello?firstName=Test&lastName=Gjengedal"
         );
-        assertEquals("<p>Hello Gjengedal,Test</p>", client.getMessageBody());
+        assertEquals("<p>Hello Gjengedal, Test</p>", client.getMessageBody());
     }
 
     @Test
