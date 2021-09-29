@@ -3,6 +3,7 @@
 ## lecture 6
 * [] styling
   - legger til style.css
+   - fjerner doctype linja øverst  
    -  
 * [] handle more than one client
    - lagde test med to httpclienter
