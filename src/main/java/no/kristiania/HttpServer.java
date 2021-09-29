@@ -16,6 +16,7 @@ public class HttpServer {
     private final ServerSocket serverSocket;
     private Path rootDirectory;
     private List<String> roles = new ArrayList<>();
+    private List<Person> people;
 
     public HttpServer(int serverPort) throws IOException {
         // må lytte til en severSocket på samme port som clienten:
@@ -181,5 +182,9 @@ public class HttpServer {
 
     public <E> void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public List<Person> getPeople() {
+        return people;
     }
 }

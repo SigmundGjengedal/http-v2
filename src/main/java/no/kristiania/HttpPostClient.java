@@ -3,13 +3,11 @@ package no.kristiania;
 import java.io.IOException;
 import java.net.Socket;
 
-public class HttpClient {
-    //********************************** fields. Disse tilhører det klienten får tilbake fra server.
+public class HttpPostClient {
+    private final HttpMessage httpMessage;
     private final int statusCode;
-    private HttpMessage httpMessage;
 
-    //************************************* constructor
-    public HttpClient(String host , int port, String requestTarget) throws IOException {
+    public HttpPostClient(String host, int port, String requestTarget, String contentBody) throws IOException { // klipt og limt httpclient, med noen endringer.
         // **************   sender request **************
         // Må ha socket for å connecte til server. Connecter socket til host og port som angitt.
         Socket socket1 = new Socket(host,port);
@@ -25,20 +23,9 @@ public class HttpClient {
         //Skal lese statuskode fra server: HelpMethod ReadLine gir oss tilbake hele status line. Den består av tre deler splittet av mellomrom.
         String[] statusLineSplitted = httpMessage.startLine.split(" "); // [protocol, statuscode, statusmessage]
         this.statusCode = Integer.parseInt(statusLineSplitted[1]);    // Vi er bare interessert i statuscoden(f.eks 200).
+    } // end of constructor
 
-    }// end of constructor
-
-
-    //************************************** gettere : henter ulike deler av respons fra server.
     public int getStatusCode() {
         return statusCode;
-    }
-
-    public String getHeader(String headerName) {
-        return httpMessage.headerFields.get(headerName);// headerFields sin get av headerName
-    }
-
-    public String getMessageBody() {
-        return httpMessage.messageBody;
     }
 }
