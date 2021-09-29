@@ -109,11 +109,14 @@ public class HttpServer {
     }
 
     public static void main(String[] args) throws IOException {
-
-        HttpServer httpServer = new HttpServer(1990);
-        // setter et root directory. Velger working directory,der vi er nå,  også kjent som "." Legger index.html rett i root.
-        httpServer.setRoot(Paths.get("."));
         // i chrome: localhost:1990/index.html
+        HttpServer httpServer = new HttpServer(1990);
+        //hvor vi finner html koden: setter et root directory. Velger working directory,der vi er nå,  også kjent som "." Legger index.html rett i root.
+        httpServer.setRoot(Paths.get("."));
+        // hvor vi finner rollene
+        httpServer.setRoles(List.of("Student", "Teaching assistant","Teacher"));
+
+
 
         /*
 
