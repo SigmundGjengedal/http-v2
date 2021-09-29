@@ -17,6 +17,7 @@
 * [] refactor -> httpMessage class
   - DRY : extract methods, spesielt den som gir 200 respons.Og den som parser query.
 
+   - refactor HttpPostClient - lagde via TDD i httpServerTest: shouldCreateNewPerson()
 * [] process POST requests from form  
     - (method = “post” i form index.html
     
