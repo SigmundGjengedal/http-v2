@@ -11,12 +11,25 @@ public class HttpMessage {
     public final Map<String, String> headerFields = new HashMap<>();
 
     public HttpMessage(Socket socket) throws IOException {
-     startLine = HttpMessage.readLine(socket);
-     readHeaders(socket);
+         // leser statusLine
+         startLine = HttpMessage.readLine(socket);
+         // leser headers
+         readHeaders(socket);
+         // skal lese hele body som kommer etter headere. Bruker readBytes()
+         messageBody = HttpMessage.readBodyBytes(socket, getContentLength());
+    }
+    //********************************* klassemetoder *************
+
+
+    // ****leser hele body, som kommer fra responsen til server. Husk at vi alltid har body i http response.
+    static String readBodyBytes(Socket socket, int contentLength) throws IOException {
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < contentLength; i++) {
+            buffer.append((char)socket.getInputStream().read());
+        }
+        return buffer.toString();
     }
 
-
-    //********************************* klassemetoder
 
     private void readHeaders(Socket socket) throws IOException {
         // skal parse Headerlines fra server. altså det før body. Lagrer Field og value i hashmap
@@ -45,6 +58,14 @@ public class HttpMessage {
         assert expectedNewLine == '\n';
         return result.toString();
     }
+
+    public int getContentLength() {
+        return Integer.parseInt(getHeader("Content-Length"));
+    }
+    public String getHeader(String headerName) {
+        return headerFields.get(headerName);// headerFields sin get av headerName
+    }
+
 }
 
 
