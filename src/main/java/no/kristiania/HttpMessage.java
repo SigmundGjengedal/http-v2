@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpMessage {
+
+
     public static String messageBody;
     public String startLine;
-    public final Map<String, String> headerFields = new HashMap<>();
+    static Map<String, String> headerFields = new HashMap<>();
 
     public HttpMessage(Socket socket) throws IOException {
 
@@ -44,7 +46,7 @@ public class HttpMessage {
     }
 
     // leser headers
-    private void readHeaders(Socket socket) throws IOException {
+    public static void readHeaders(Socket socket) throws IOException {
         // skal parse Headerlines fra server. altså det før body. Lagrer Field og value i hashmap
         String headerLine;
         while (!(headerLine = HttpMessage.readLine(socket) ).isBlank() ){ // ved blank linje er headers ferdig, da kommer body.
@@ -71,8 +73,11 @@ public class HttpMessage {
     public int getContentLength() {
         return Integer.parseInt(getHeader("Content-Length"));
     }
-    public String getHeader(String headerName) {
+    public static String getHeader(String headerName) {
         return headerFields.get(headerName);// headerFields sin get av headerName
+    }
+    public static String getMessageBody() {
+        return messageBody;
     }
 
 }

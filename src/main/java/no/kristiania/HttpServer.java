@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static no.kristiania.HttpMessage.*;
+
 public class HttpServer {
 
     private final ServerSocket serverSocket;
@@ -80,17 +82,8 @@ public class HttpServer {
         if(requestTarget.equals("/api/listPeople")){
             // String messageBody = "DETTE ER LISTEN";
             String text = "";
-            String messageBody = people.toString();
+            String messageBody = returnProductMap(allPersonell, text);
             writeOkResponse(clientSocket, messageBody,"text/html");
-        }
-        else if (fileTarget.equals("/api/newPerson")) {
-            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
-            Person person = new Person();
-            person.setFirstName(queryMap.get("firstName"));
-            person.setLastName(queryMap.get("lastName"));
-            people.add(person);
-            writeOkResponse(clientSocket,"it is done", "text/html");
-
         } else if (fileTarget.equals("/api/roleOptions")) {
             String responseText = "";
             int value = 1;
@@ -98,8 +91,16 @@ public class HttpServer {
                 responseText += "<option value=" +(value++) +">" + role + "</option>";
             }
             writeOkResponse(clientSocket, responseText, "text/html");
+        }
+        else if (fileTarget.equals("/api/newPerson")) {
+            readHeaders(clientSocket);
+            String postBody= getMessageBody();
+            Map<String,String> postQueryMap = new HashMap<>();
+            parseQuery(postBody,postQueryMap);
+            allPersonell.put(counter++,new Person(postQueryMap.get("lastName"),postQueryMap.get("firstName")));
+            writeOkResponse(clientSocket,"it is done", "text/html");
 
-        }else{
+        }
 
             if (rootDirectory!= null &&  Files.exists(rootDirectory.resolve(requestTarget.substring(1)))){
                 // finner fila som filetarget peker til:
@@ -122,7 +123,8 @@ public class HttpServer {
                     responseText;
             clientSocket.getOutputStream().write(response.getBytes());
         }
-    }
+
+
 
     //************************** HM
 
@@ -136,6 +138,15 @@ public class HttpServer {
             queryMap.put(parameterName,parameterValue);
         }
         return queryMap;
+    }
+
+    private void parseQuery(String query, Map<String,String> map) {
+        for( String queryParameter : query.split("&") ){
+            int equalsPos = queryParameter.indexOf("=");
+            String parameterName = queryParameter.substring(0,equalsPos);
+            String parameterValue = queryParameter.substring(equalsPos+1);
+            map.put(parameterName,parameterValue);
+        }
     }
 
     private void writeOkResponse(Socket clientSocket, String responseText, String contentType) throws IOException {
