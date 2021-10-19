@@ -18,7 +18,7 @@ public class HttpMessage {
          readHeaders(socket);
          // Dersom request har body(altså en post request), så må vi parse den. Det har den visst vi har content-length i header. Da skal vi lese hele body som kommer etter headere. Bruker readBodyBytes()
          if(headerFields.containsKey("Content-Length")) {
-            messageBody = HttpMessage.readBodyBytes(socket, getContentLength());
+            messageBody = HttpMessage.readBody(socket, getContentLength());
         }
 
     }
@@ -58,12 +58,12 @@ public class HttpMessage {
 
     // ****leser hele body.
     // Leser den som bytes. Returner som en string via toString.
-    static String readBodyBytes(Socket socket, int contentLength) throws IOException {
-        StringBuilder buffer = new StringBuilder();
+    static String readBody(Socket socket, int contentLength) throws IOException {
+        StringBuilder body = new StringBuilder();
         for (int i = 0; i < contentLength; i++) {
-            buffer.append((char)socket.getInputStream().read());
+            body.append((char)socket.getInputStream().read());
         }
-        return buffer.toString();
+        return body.toString();
     }
 
 

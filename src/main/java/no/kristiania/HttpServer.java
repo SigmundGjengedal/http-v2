@@ -17,7 +17,8 @@ public class HttpServer {
     private Path rootDirectory;
     private List<String> roles = new ArrayList<>();
     private List<Person> people = new ArrayList<>();
-    private Map<Integer,Person> allPersons =new HashMap<>();
+    private Map<Integer,Person> allPersonell =new HashMap<>();
+    private int counter;
 
 
     public HttpServer(int serverPort) throws IOException {
@@ -76,16 +77,17 @@ public class HttpServer {
             writeOkResponse(clientSocket, responseText, "text/html");
 
         }
-        if(requestTarget.equals("/api/products")){
+        if(requestTarget.equals("/api/listPeople")){
             // String messageBody = "DETTE ER LISTEN";
             String text = "";
-            String messageBody = returnProductMap(allPersons, text);
+            String messageBody = people.toString();
             writeOkResponse(clientSocket, messageBody,"text/html");
         }
         else if (fileTarget.equals("/api/newPerson")) {
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
             Person person = new Person();
             person.setFirstName(queryMap.get("firstName"));
+            person.setLastName(queryMap.get("lastName"));
             people.add(person);
             writeOkResponse(clientSocket,"it is done", "text/html");
 
