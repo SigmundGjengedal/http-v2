@@ -3,14 +3,14 @@ package no.kristiania;
 import java.io.IOException;
 import java.net.Socket;
 
-public class HttpClient {
+public class HttpGetClient {
     //********************************** fields. Disse tilhører det klienten får tilbake fra server.
     private final int statusCode;
     private HttpMessage httpMessage;
 
     //************************************* constructor
-    public HttpClient(String host , int port, String requestTarget) throws IOException {
-        // **************   sender request **************
+    public HttpGetClient(String host , int port, String requestTarget) throws IOException {
+        // **************   konstruerer request **************
         // Må ha socket for å connecte til server. Connecter socket til host og port som angitt.
         Socket socket1 = new Socket(host,port);
         // Skal skrive en http-request(en string). Requestline + to første linjene i Request Headers
@@ -20,9 +20,11 @@ public class HttpClient {
                 "\r\n";
         // sender den til server, som output fra klient. Sender stringen som bytes
         socket1.getOutputStream().write(request.getBytes());
+
+
         // **************  leser respons **************
         httpMessage = new HttpMessage(socket1);
-        //Skal lese statuskode fra server: HelpMethod ReadLine gir oss tilbake hele status line. Den består av tre deler splittet av mellomrom.
+        //Skal lese statuskode fra server:
         String[] statusLineSplitted = httpMessage.startLine.split(" "); // [protocol, statuscode, statusmessage]
         this.statusCode = Integer.parseInt(statusLineSplitted[1]);    // Vi er bare interessert i statuscoden(f.eks 200).
 

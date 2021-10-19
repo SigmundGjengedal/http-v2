@@ -39,17 +39,17 @@ public class HttpServer {
 
     // parser request fra client: Ser foreløpig kun på første linje, altså requestline.
     private void handleClient() throws IOException {
-        // må accepte request fra client: kobler altså outputten fra client, til inputten til servere:
+        // må accepte request fra client,  og opprette kontakt.  Denne brukes for å sende svar tilbake.
         Socket clientSocket = serverSocket.accept();
 
-        // må parse hele HTTPmessagen.
+        // oppretter instanse av httpMessage for å hente ut requestline. Må ha metodene i httpMessage,
         HttpMessage httpMessage = new HttpMessage(clientSocket);
-        // må lese requestline. Bruker readline uten while, da blir det bare en linje. Splitter på mellomrom, og lagrer i et array.
+        // må parse requestline. Bruker readline uten while, da blir det bare en linje. Splitter på mellomrom, og lagrer i et array.
         String[] requestLine = httpMessage.startLine.split(" ");
-        // henter ut hele requestTarget fra requestLine.
+        // parser ut hele requestTarget fra requestLine.
         String requestTarget = requestLine[1];// requestline =  [HTTP-METHOD, requestTarget, HTTP-PROTOCOL]
 
-        // splitter requestTarget i fileTarget og query
+        // parser requestTarget i fileTarget og query ( kommer inn som f.eks /hello?firstName=geir&lastName=hansen)
         int questionPos = requestTarget.indexOf('?');
         String fileTarget; // skal deles i filetarget og query
         String query = null;
@@ -60,7 +60,8 @@ public class HttpServer {
             fileTarget = requestTarget;
         }
 
-        // kontrollstuktur iht hva fileTarget og query ble i forrige steg:
+        // ******************* kontrollstuktur :  iht hva fileTarget og query ble i forrige steg:
+
         if(fileTarget.equals("/hello")) {
             String yourName = "World";
             if (query != null) {
@@ -91,7 +92,7 @@ public class HttpServer {
         }else{
 
             if (rootDirectory!= null &&  Files.exists(rootDirectory.resolve(requestTarget.substring(1)))){
-                // finner fila som request target peker til:
+                // finner fila som filetarget peker til:
                 String responseText = Files.readString(rootDirectory.resolve(requestTarget.substring(1)));
                 // default verdi
                 String contentType = "text/plain";
@@ -113,8 +114,10 @@ public class HttpServer {
         }
     }
 
+    //************************** HM
+
     private Map<String, String> parseRequestParameters(String query) {
-        // parser ut queryParameterene. De som gir fornavn og etternavn. Splitter på & tegnet og finner forskjellig.
+        // parser ut queryParameterene. De som gir fornavn og etternavn. & tegnet skiller forskjellig key value sett.( s=x&z=n )
         Map<String, String> queryMap = new HashMap<>();
         for (String queryParameter : query.split("&")) {
             int equalsPos = queryParameter.indexOf('=');
@@ -136,16 +139,8 @@ public class HttpServer {
         clientSocket.getOutputStream().write(response.getBytes());
     }
 
-    public static void main(String[] args) throws IOException {
-        // i chrome: localhost:1990/index.html
-        HttpServer httpServer = new HttpServer(1990);
-        //hvor vi finner html koden: setter et root directory. Velger working directory,der vi er nå,  også kjent som "." Legger index.html rett i root.
-        httpServer.setRoot(Paths.get("."));
-        // hvor vi finner rollene
-        httpServer.setRoles(List.of("Student", "Teaching assistant","Teacher"));
 
-    }
-
+        // getter og setters
     public int getPort() {
         return serverSocket.getLocalPort();
     }
@@ -160,5 +155,17 @@ public class HttpServer {
 
     public List<Person> getPeople() {
         return people;
+    }
+
+ // ****************** MAIN
+
+    public static void main(String[] args) throws IOException {
+        // i chrome: localhost:1990/index.html
+        HttpServer httpServer = new HttpServer(1990);
+        //hvor vi finner html koden: setter et root directory. Velger working directory,der vi er nå,  også kjent som "." Legger index.html rett i root.
+        httpServer.setRoot(Paths.get("."));
+        // hvor vi finner rollene
+        httpServer.setRoles(List.of("Student", "Teaching assistant","Teacher"));
+
     }
 }

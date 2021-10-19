@@ -11,6 +11,7 @@ public class HttpMessage {
     public final Map<String, String> headerFields = new HashMap<>();
 
     public HttpMessage(Socket socket) throws IOException {
+
          // leser statusLine
          startLine = HttpMessage.readLine(socket);
          // leser headers
@@ -24,16 +25,25 @@ public class HttpMessage {
     //********************************* klassemetoder *************
 
 
-    // ****leser hele body, som kommer fra responsen til server. Husk at vi alltid har body i http response.
-    static String readBodyBytes(Socket socket, int contentLength) throws IOException {
-        StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < contentLength; i++) {
-            buffer.append((char)socket.getInputStream().read());
+    // ***** Leser requestline, eller responsline.
+    // (f.eks "HTTP/1.1 200 OK").
+    // Skal den lese flere linjer må den settes i en while der den kalles.
+    static String readLine(Socket socket) throws IOException {
+        StringBuilder result = new StringBuilder();
+        int c;
+        // skal lese en linje, dvs til CR
+        while ((c = socket.getInputStream().read()) != '\r' ){
+            result.append((char)c); // konverterer til char
         }
-        return buffer.toString();
+        // må lese \n for å havne riktig til neste linje
+        int expectedNewLine = socket.getInputStream().read();
+        assert expectedNewLine == '\n';
+
+        // returner stringen:
+        return result.toString();
     }
 
-
+    // leser headers
     private void readHeaders(Socket socket) throws IOException {
         // skal parse Headerlines fra server. altså det før body. Lagrer Field og value i hashmap
         String headerLine;
@@ -46,22 +56,18 @@ public class HttpMessage {
         }
     }
 
-    // ***** readLine: Leser en linje i response headers(input).
-    // Første er status line (f.eks "HTTP/1.1 200 OK").
-    // Skal den lese flere linjer må den settes i en while der den kalles.
-    static String readLine(Socket socket) throws IOException {
-        StringBuilder result = new StringBuilder();
-        int c;
-        // skal lese en linje, dvs til CR
-        while ((c = socket.getInputStream().read()) != '\r' ){
-            result.append((char)c); // konverterer til char
+    // ****leser hele body.
+    // Leser den som bytes. Returner som en string via toString.
+    static String readBodyBytes(Socket socket, int contentLength) throws IOException {
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < contentLength; i++) {
+            buffer.append((char)socket.getInputStream().read());
         }
-        // må lese \n for å havne riktig til neste linje
-        int expectedNewLine = socket.getInputStream().read();
-        assert expectedNewLine == '\n';
-        return result.toString();
+        return buffer.toString();
     }
 
+
+    // gettere:
     public int getContentLength() {
         return Integer.parseInt(getHeader("Content-Length"));
     }

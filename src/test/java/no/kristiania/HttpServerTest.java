@@ -23,19 +23,19 @@ class HttpServerTest {
     void shouldReturn404ForUnknownRequestTarget() throws IOException {
 
         //client skal connecte til samme server:
-        HttpClient client = new HttpClient("localhost",server.getPort(),"/non-existing");
+        HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/non-existing");
         assertEquals(404,client.getStatusCode());
     }
 
     @Test
     void ShouldRespondWithRequestTargetIn404() throws IOException {
-        HttpClient client = new HttpClient("localhost",server.getPort(),"/non-existing");
+        HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/non-existing");
         assertEquals("File not found: /non-existing",client.getMessageBody());
     }
 
     @Test
     void shouldRespondWith200ForKnownRequestTarget() throws IOException {
-        HttpClient client = new HttpClient("localhost",server.getPort(),"/hello");
+        HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/hello");
         assertAll(
                 () -> assertEquals(200, client.getStatusCode()),
                 () -> assertEquals("text/html", client.getHeader("Content-Type")),
@@ -45,8 +45,8 @@ class HttpServerTest {
 
     @Test
     void shouldHandleMoreThanOneRequests() throws IOException {
-        assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello").getStatusCode());
-        assertEquals(200, new HttpClient("localhost", server.getPort(), "/hello").getStatusCode());
+        assertEquals(200, new HttpGetClient("localhost", server.getPort(), "/hello").getStatusCode());
+        assertEquals(200, new HttpGetClient("localhost", server.getPort(), "/hello").getStatusCode());
 
 
 
@@ -55,7 +55,7 @@ class HttpServerTest {
 
     @Test
     void shouldEchoQueryParameter() throws IOException {
-        HttpClient client = new HttpClient(
+        HttpGetClient client = new HttpGetClient(
                 "localhost",
                 server.getPort(),
                 "/hello?firstName=Test&lastName=Gjengedal"
@@ -72,7 +72,7 @@ class HttpServerTest {
         Files.write(Paths.get("target/test-classes/example-file.txt"),fileContent.getBytes());
 
         // sier til serveren at jeg skal hente den fila, og at jeg da forventer å få innholdet i den  fila.
-        HttpClient client = new HttpClient("localhost",server.getPort(),"/example-file.txt");
+        HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/example-file.txt");
         assertEquals(fileContent,client.getMessageBody());
         assertEquals("text/plain",client.getHeader("Content-Type"));
     }
@@ -86,7 +86,7 @@ class HttpServerTest {
         Files.write(Paths.get("target/test-classes/example-file.html"),fileContent.getBytes());
 
         // sier til serveren at jeg skal hente den fila, og at jeg da forventer å få innholdet i den  fila.
-        HttpClient client = new HttpClient("localhost", server.getPort(),"/example-file.html");
+        HttpGetClient client = new HttpGetClient("localhost", server.getPort(),"/example-file.html");
         // vil at den skal respondere med text/html
         assertEquals("text/html",client.getHeader("Content-Type"));
 
@@ -97,7 +97,7 @@ class HttpServerTest {
         // gitt at serveren min er satt opp med en del roller vi skal returnere, så er det disse rollene vi skal returnere:
         server.setRoles(List.of("Teacher", "Student"));
 
-        HttpClient client = new HttpClient("localhost",server.getPort(),"/api/roleOptions");
+        HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/api/roleOptions");
         assertEquals(
             "<option value=1>Teacher</option><option value=2>Student</option>",
                 client.getMessageBody()
