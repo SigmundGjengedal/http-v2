@@ -17,9 +17,6 @@ public class HttpServer {
     private Path rootDirectory;
     private List<String> roles = new ArrayList<>();
     private List<Person> people = new ArrayList<>();
-    private Map<Integer,Person> allPersonell =new HashMap<>();
-    private int counter;
-
 
     public HttpServer(int serverPort) throws IOException {
         // må lytte til en severSocket på samme port som clienten:
