@@ -1,0 +1,21 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List existing people | Personell server</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+    <h1>List of people</h1>
+    <div id="productList"></div>
+</main>
+</body>
+<script>
+    fetch("/api/listPeople").then(function (res) {
+        return res.text()
+    }).then(function (text) {
+        document.querySelector("#productList").innerHTML = text;
+    });
+</script>
+</html>

@@ -20,7 +20,7 @@
 </body>
 
 <script>
-    fetch("api/roleOptions").then(function (res) {
+    fetch("/api/roleOptions").then(function (res) {
         return res.text();
     }).then(function(text) {
          document.getElementById("roles").innerHTML = text;

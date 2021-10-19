@@ -17,6 +17,8 @@ public class HttpServer {
     private Path rootDirectory;
     private List<String> roles = new ArrayList<>();
     private List<Person> people = new ArrayList<>();
+    private Map<Integer,Person> allPersons =new HashMap<>();
+
 
     public HttpServer(int serverPort) throws IOException {
         // må lytte til en severSocket på samme port som clienten:
@@ -62,7 +64,7 @@ public class HttpServer {
 
         // ******************* kontrollstuktur :  iht hva fileTarget og query ble i forrige steg:
 
-        if(fileTarget.equals("/hello")) {
+        if(fileTarget.equals("/api/hello")) {
             String yourName = "World";
             if (query != null) {
                 Map<String, String> queryMap = parseRequestParameters(query);
@@ -73,7 +75,14 @@ public class HttpServer {
             String responseText = "<p>Hello " + yourName + "</p>";
             writeOkResponse(clientSocket, responseText, "text/html");
 
-        } else if (fileTarget.equals("/api/newPerson")) {
+        }
+        if(requestTarget.equals("/api/products")){
+            // String messageBody = "DETTE ER LISTEN";
+            String text = "";
+            String messageBody = returnProductMap(allPersons, text);
+            writeOkResponse(clientSocket, messageBody,"text/html");
+        }
+        else if (fileTarget.equals("/api/newPerson")) {
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
             Person person = new Person();
             person.setFirstName(queryMap.get("firstName"));
@@ -82,7 +91,6 @@ public class HttpServer {
 
         } else if (fileTarget.equals("/api/roleOptions")) {
             String responseText = "";
-
             int value = 1;
             for(String role : roles){
                 responseText += "<option value=" +(value++) +">" + role + "</option>";
@@ -139,8 +147,7 @@ public class HttpServer {
         clientSocket.getOutputStream().write(response.getBytes());
     }
 
-
-        // getter og setters
+    // getter og setters
     public int getPort() {
         return serverSocket.getLocalPort();
     }
@@ -149,12 +156,19 @@ public class HttpServer {
         this.rootDirectory = rootDirectory;
     }
 
-    public <E> void setRoles(List<String> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 
     public List<Person> getPeople() {
         return people;
+    }
+
+    public String returnProductMap(Map map, String messageBody){
+        for (int i = 1; i < map.size()+1; i++) {
+            messageBody += "<p>" + i + ": " + map.get(i).toString() + "</p>";
+        }
+        return messageBody;
     }
 
  // ****************** MAIN
