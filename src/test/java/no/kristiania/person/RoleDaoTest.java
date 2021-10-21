@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class RoleDaoTest {
-    private RoleDao dao = new RoleDao(TestData.TestDataSource());
+    private RoleDao dao = new RoleDao(TestData.testDataSource());
 
     @Test
     void shouldListSavedRoles() throws SQLException {
