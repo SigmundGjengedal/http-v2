@@ -35,7 +35,7 @@ class HttpServerTest {
 
     @Test
     void shouldRespondWith200ForKnownRequestTarget() throws IOException {
-        HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/hello");
+        HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/api/hello");
         assertAll(
                 () -> assertEquals(200, client.getStatusCode()),
                 () -> assertEquals("text/html", client.getHeader("Content-Type")),
@@ -45,8 +45,8 @@ class HttpServerTest {
 
     @Test
     void shouldHandleMoreThanOneRequests() throws IOException {
-        assertEquals(200, new HttpGetClient("localhost", server.getPort(), "/hello").getStatusCode());
-        assertEquals(200, new HttpGetClient("localhost", server.getPort(), "/hello").getStatusCode());
+        assertEquals(200, new HttpGetClient("localhost", server.getPort(), "/api/hello").getStatusCode());
+        assertEquals(200, new HttpGetClient("localhost", server.getPort(), "/api/hello").getStatusCode());
 
 
 
@@ -58,7 +58,7 @@ class HttpServerTest {
         HttpGetClient client = new HttpGetClient(
                 "localhost",
                 server.getPort(),
-                "/hello?firstName=Test&lastName=Gjengedal"
+                "/api/hello?firstName=Test&lastName=Gjengedal"
         );
         assertEquals("<p>Hello Gjengedal, Test</p>", client.getMessageBody());
     }
