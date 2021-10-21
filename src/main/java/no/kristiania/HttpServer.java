@@ -1,10 +1,10 @@
 package no.kristiania;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,6 @@ import java.util.Map;
 public class HttpServer {
 
     private final ServerSocket serverSocket;
-    private Path rootDirectory;
     private List<String> roles = new ArrayList<>();
     private List<Person> people = new ArrayList<>();
 
@@ -97,10 +96,13 @@ public class HttpServer {
             writeOkResponse(clientSocket, responseText, "text/html");
 
         }else{
+            // satt opp for å handtere filstruktur med jar fil. Angir hvor vi finner koden og leser/parser bytes.
+            InputStream fileResource = getClass().getResourceAsStream(fileTarget);
+            if (fileResource != null){
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                fileResource.transferTo(buffer);
+                String responseText = buffer.toString();
 
-            if (rootDirectory!= null &&  Files.exists(rootDirectory.resolve(requestTarget.substring(1)))){
-                // finner fila som filetarget peker til:
-                String responseText = Files.readString(rootDirectory.resolve(requestTarget.substring(1)));
                 // default verdi
                 String contentType = "text/plain";
                 // men endres om...
@@ -151,10 +153,6 @@ public class HttpServer {
         return serverSocket.getLocalPort();
     }
 
-    public void setRoot(Path rootDirectory) {
-        this.rootDirectory = rootDirectory;
-    }
-
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
@@ -163,22 +161,13 @@ public class HttpServer {
         return people;
     }
 
-    public String returnProductMap(Map map, String messageBody){
-        for (int i = 1; i < map.size()+1; i++) {
-            messageBody += "<p>" + i + ": " + map.get(i).toString() + "</p>";
-        }
-        return messageBody;
-    }
 
  // ****************** MAIN
 
     public static void main(String[] args) throws IOException {
         // i chrome: localhost:1990/index.html
-        HttpServer httpServer = new HttpServer(1990);
-        //hvor vi finner html koden: setter et root directory. Velger working directory,der vi er nå,  også kjent som "." Legger index.html rett i root.
-        httpServer.setRoot(Paths.get("."));
+        HttpServer httpServer = new HttpServer(1991);
         // hvor vi finner rollene
         httpServer.setRoles(List.of("Student", "Teaching assistant","Teacher"));
-
     }
 }
