@@ -1,5 +1,9 @@
-package no.kristiania;
+package no.kristiania.http;
 
+import no.kristiania.HttpGetClient;
+import no.kristiania.HttpPostClient;
+import no.kristiania.HttpServer;
+import no.kristiania.Person;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

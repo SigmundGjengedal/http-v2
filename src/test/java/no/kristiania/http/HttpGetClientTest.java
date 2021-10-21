@@ -1,5 +1,7 @@
-package no.kristiania;
+package no.kristiania.http;
 
+import no.kristiania.HttpGetClient;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -11,7 +13,7 @@ public class HttpGetClientTest {
 
    @Test
    void shouldReturnStatesCode() throws IOException {
-      assertEquals(200, new HttpGetClient("httpbin.org",80, "/html").getStatusCode()) ;
+      Assertions.assertEquals(200, new HttpGetClient("httpbin.org",80, "/html").getStatusCode()) ;
       assertEquals(404, new HttpGetClient("httpbin.org",80, "/no-such-page").getStatusCode()) ;
    }
 
