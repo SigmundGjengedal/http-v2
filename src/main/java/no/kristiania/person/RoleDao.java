@@ -16,8 +16,13 @@ public class RoleDao {
             this.dataSource = testDataSource;
     }
 
-    public void save(String roleName) {
-
+    public void save(String roleName) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("insert into roles (name) values(?)")) {
+                statement.setString(1,roleName);
+                statement.executeUpdate();
+            }
+        }
     }
 
     public List<String> listAll() throws SQLException {
