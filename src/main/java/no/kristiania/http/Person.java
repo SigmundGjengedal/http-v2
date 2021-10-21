@@ -1,4 +1,4 @@
-package no.kristiania;
+package no.kristiania.http;
 
 public class Person {
 

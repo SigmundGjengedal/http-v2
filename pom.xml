@@ -34,6 +34,13 @@
             <version>3.21.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.200</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -50,7 +57,7 @@
                 <configuration>
                     <archive>
                          <manifestEntries>
-                             <Main-Class>no.kristiania.HttpServer</Main-Class>
+                             <Main-Class>no.kristiania.http.HttpServer</Main-Class>
                          </manifestEntries>
                     </archive>
                 </configuration>
