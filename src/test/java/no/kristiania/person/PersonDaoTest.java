@@ -1,16 +1,17 @@
 package no.kristiania.person;
 
-import no.kristiania.http.Person;
+import no.kristiania.person.Person;
 import org.junit.jupiter.api.Test;
+
+import java.sql.SQLException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class PersonDaoTest {
     private PersonDao dao = new PersonDao(TestData.testDataSource());
 
-
     @Test
-    void shouldRetrieveSavedPerson() {
+    void shouldRetrieveSavedPerson() throws SQLException {
         Person person = examplePerson();
         dao.save(person);
 
