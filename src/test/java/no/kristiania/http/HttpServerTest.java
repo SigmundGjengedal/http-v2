@@ -1,11 +1,14 @@
 package no.kristiania.http;
 
 import no.kristiania.person.Person;
+import no.kristiania.person.RoleDao;
+import no.kristiania.person.TestData;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -96,9 +99,13 @@ class HttpServerTest {
     }
 
     @Test
-    void shouldReturnRolesFromServer() throws IOException {
+     void shouldReturnRolesFromServer() throws IOException, SQLException {
         // gitt at serveren min er satt opp med en del roller vi skal returnere, så er det disse rollene vi skal returnere:
-        server.setRoles(List.of("Teacher", "Student"));
+        RoleDao roleDao = new RoleDao(TestData.testDataSource());
+        roleDao.save("Teacher");
+        roleDao.save("Student");
+        server.setRoleDao(roleDao);
+
 
         HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/api/roleOptions");
         assertEquals(

@@ -1,12 +1,18 @@
 package no.kristiania.http;
 
 import no.kristiania.person.Person;
+import no.kristiania.person.PersonDao;
+import no.kristiania.person.RoleDao;
+import org.flywaydb.core.Flyway;
+import org.postgresql.ds.PGSimpleDataSource;
 
+import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +21,8 @@ import java.util.Map;
 public class HttpServer {
 
     private final ServerSocket serverSocket;
-    private List<String> roles = new ArrayList<>();
     private List<Person> people = new ArrayList<>();
+    private RoleDao roleDao;
 
     public HttpServer(int serverPort) throws IOException {
         // må lytte til en severSocket på samme port som clienten:
@@ -32,13 +38,13 @@ public class HttpServer {
             while(true){ // evig. Er for å holde serveren oppe.
               handleClient();
             }
-        }catch(IOException e){ // om noe går galt på nettverket, f.eks ugyldig host.
+        }catch(IOException | SQLException e){ // om noe går galt på nettverket, f.eks ugyldig host.
             e.printStackTrace();
         }
     }
 
     // parser request fra client: Ser foreløpig kun på første linje, altså requestline.
-    private void handleClient() throws IOException {
+    private void handleClient() throws IOException, SQLException {
         // må accepte request fra client,  og opprette kontakt.  Denne brukes for å sende svar tilbake.
         Socket clientSocket = serverSocket.accept();
 
@@ -91,7 +97,7 @@ public class HttpServer {
         } else if (fileTarget.equals("/api/roleOptions")) {
             String responseText = "";
             int value = 1;
-            for(String role : roles){
+            for(String role : roleDao.listAll()){
                 responseText += "<option value=" +(value++) +">" + role + "</option>";
             }
             writeOkResponse(clientSocket, responseText, "text/html");
@@ -154,8 +160,8 @@ public class HttpServer {
         return serverSocket.getLocalPort();
     }
 
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
+    public void setRoleDao(RoleDao roleDao) {
+        this.roleDao = roleDao;
     }
 
     public List<Person> getPeople() {
@@ -166,10 +172,19 @@ public class HttpServer {
  // ****************** MAIN
 
     public static void main(String[] args) throws IOException {
-        // i chrome: localhost:1990/index.html
+        // i chrome: localhost:1991/index.html
         HttpServer httpServer = new HttpServer(1991);
         // hvor vi finner rollene
-        httpServer.setRoles(List.of("Student", "Teaching assistant","Teacher"));
-       // httpServer.setRoot
+        httpServer.setRoleDao(new RoleDao(createDataSource()));
+
+    }
+
+    private static DataSource createDataSource() {
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        dataSource.setURL("jdbc:postgresql://localhost:5432/person_db2");
+        dataSource.setUser("person_dbuser2");
+        dataSource.setPassword("k%3'`(?Qu?");
+        Flyway.configure().dataSource(dataSource).load().migrate();
+        return dataSource;
     }
 }
