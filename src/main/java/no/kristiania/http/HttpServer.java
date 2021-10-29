@@ -170,5 +170,6 @@ public class HttpServer {
         HttpServer httpServer = new HttpServer(1991);
         // hvor vi finner rollene
         httpServer.setRoles(List.of("Student", "Teaching assistant","Teacher"));
+       // httpServer.setRoot
     }
 }
