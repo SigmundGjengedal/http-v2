@@ -22,6 +22,19 @@ public class PersonDaoTest {
                 ;
     }
 
+    @Test
+    void shouldListAllPeople() throws SQLException {
+        Person person = examplePerson();
+        dao.save(person);
+        Person anotherPerson = examplePerson();
+        dao.save(anotherPerson);
+
+        assertThat(dao.listAll())
+                .extracting(Person::getId)
+                .contains(person.getId())
+
+    }
+
     private Person examplePerson() {
         Person person = new Person();
         person.setFirstName(TestData.pickOne("Sigmund","Sandra","Jacob","Kåre"));
