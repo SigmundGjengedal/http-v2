@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PersonDaoTest {
     private PersonDao dao = new PersonDao(TestData.testDataSource());
@@ -31,7 +31,9 @@ public class PersonDaoTest {
 
         assertThat(dao.listAll())
                 .extracting(Person::getId)
-                .contains(person.getId())
+                .contains(person.getId(),anotherPerson.getId())
+                ;
+
 
     }
 

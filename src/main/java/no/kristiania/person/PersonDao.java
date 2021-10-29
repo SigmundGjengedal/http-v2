@@ -2,6 +2,7 @@ package no.kristiania.person;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PersonDao {
@@ -12,10 +13,10 @@ public class PersonDao {
     }
 
     public void save(Person person) throws SQLException {
-        try (Connection connection = dataSource.getConnection() ) {
+        try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("insert into people (first_name, last_name) values (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1,person.getFirstName());
-                statement.setString(2,person.getLastName());
+                statement.setString(1, person.getFirstName());
+                statement.setString(2, person.getLastName());
 
                 statement.executeUpdate();
 
@@ -30,21 +31,36 @@ public class PersonDao {
     public Person retrieve(long id) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from people where id = ?")) {
-                statement.setLong(1,id);
+                statement.setLong(1, id);
 
                 try (ResultSet rs = statement.executeQuery()) {
                     rs.next();
-                    Person person = new Person();
-                    person.setId(rs.getLong("id")); // setter id og navn i objektet
-                    person.setFirstName(rs.getString("first_name"));
-                    person.setLastName(rs.getString("last_name"));
+                    Person person = getPersonFromResultSet(rs);
                     return person;
                 }
             }
         }
     }
 
-    public List<Person> listAll() {
-        return null;
+    private Person getPersonFromResultSet(ResultSet rs) throws SQLException {
+        Person person = new Person();
+        person.setId(rs.getLong("id")); // setter id og navn i objektet
+        person.setFirstName(rs.getString("first_name"));
+        person.setLastName(rs.getString("last_name"));
+        return person;
+    }
+
+    public List<Person> listAll() throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("select * from people")) {
+                try (ResultSet rs = statement.executeQuery()) {
+                    ArrayList<Person> result = new ArrayList<>();
+                    while(rs.next()){
+                        result.add(getPersonFromResultSet(rs));
+                    }
+                    return result;
+                }
+            }
+        }
     }
 }
