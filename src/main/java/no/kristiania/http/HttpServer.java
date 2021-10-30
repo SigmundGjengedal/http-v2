@@ -5,26 +5,27 @@ import no.kristiania.person.PersonDao;
 import no.kristiania.person.RoleDao;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HttpServer {
 
     private final ServerSocket serverSocket;
     private List<Person> people = new ArrayList<>();
     private RoleDao roleDao;
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
+    // lagrer controllers i map
+    private HashMap<String, HttpController> controllers = new HashMap<>();
 
     public HttpServer(int serverPort) throws IOException {
         // må lytte til en severSocket på samme port som clienten:
@@ -68,6 +69,12 @@ public class HttpServer {
             fileTarget = requestTarget;
         }
 
+        if (controllers.containsKey(fileTarget)) {
+            HttpMessage response = controllers.get(fileTarget).handle(httpMessage);
+            response.write(clientSocket);
+            return;
+        }
+
         // ******************* kontrollstuktur :  iht hva fileTarget og query ble i forrige steg:
 
         if(fileTarget.equals("/api/hello")) {
@@ -82,7 +89,7 @@ public class HttpServer {
             writeOkResponse(clientSocket, responseText, "text/html");
 
         }
-        if(requestTarget.equals("/api/listPeople")){
+        else if(requestTarget.equals("/api/listPeople")){
             // String messageBody = "DETTE ER LISTEN";
             String text = "";
             String messageBody = people.toString();
@@ -95,15 +102,6 @@ public class HttpServer {
             person.setLastName(queryMap.get("lastName"));
             people.add(person);
             writeOkResponse(clientSocket,"it is done", "text/html");
-
-        } else if (fileTarget.equals("/api/roleOptions")) {
-            String responseText = "";
-            int value = 1;
-            for(String role : roleDao.listAll()){
-                responseText += "<option value=" +(value++) +">" + role + "</option>";
-            }
-            writeOkResponse(clientSocket, responseText, "text/html");
-
         }else{
             // satt opp for å handtere filstruktur med jar fil. Angir hvor vi finner koden og leser/parser bytes.
             InputStream fileResource = getClass().getResourceAsStream(fileTarget);
@@ -179,15 +177,31 @@ public class HttpServer {
         HttpServer httpServer = new HttpServer(1991);
         // hvor vi finner rollene
         httpServer.setRoleDao(new RoleDao(createDataSource()));
+        logger.info("Starting http://localhost:{}/index.html",httpServer.getPort());
 
     }
 
-    private static DataSource createDataSource() {
+    private static DataSource createDataSource() throws IOException {
+        Properties properties = new Properties();
+        try (FileReader fileReader = new FileReader("pgr203.properties")) {
+            properties.load(fileReader);
+        }
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setURL("jdbc:postgresql://localhost:5432/person_db2");
-        dataSource.setUser("person_dbuser2");
-        dataSource.setPassword("k%3'`(?Qu?");
+        dataSource.setURL(properties.getProperty("dataSource.url",
+                "jdbc:postgresql://localhost:5432/person_db2"
+        ));
+
+        dataSource.setUser(properties.getProperty("dataSource.user",
+                "person_dbuser2"
+        ));
+
+        dataSource.setPassword(properties.getProperty("dataSource.password"));
+
         Flyway.configure().dataSource(dataSource).load().migrate();
         return dataSource;
+    }
+
+    public void addController(String path, HttpController controller) {
+        controllers.put(path, controller);
     }
 }
