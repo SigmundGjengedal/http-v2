@@ -201,4 +201,8 @@ public class HttpServer {
         Flyway.configure().dataSource(dataSource).load().migrate();
         return dataSource;
     }
+
+    public void addController(String path, HttpController controller) {
+
+    }
 }

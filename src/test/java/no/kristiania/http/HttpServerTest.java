@@ -105,7 +105,7 @@ class HttpServerTest {
         roleDao.save("Teacher");
         roleDao.save("Student");
         server.setRoleDao(roleDao);
-        server.addController("/api/roleOptions",new RoleOptionsController(RoleDao));
+        server.addController("/api/roleOptions",new RoleOptionsController(roleDao));
 
 
         HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/api/roleOptions");
