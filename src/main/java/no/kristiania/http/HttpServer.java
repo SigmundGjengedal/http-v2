@@ -184,7 +184,7 @@ public class HttpServer {
 
     private static DataSource createDataSource() throws IOException {
         Properties properties = new Properties();
-        try (FileReader fileReader = new FileReader("http2.properties")) {
+        try (FileReader fileReader = new FileReader("pgr203.properties")) {
             properties.load(fileReader);
         }
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
