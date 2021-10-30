@@ -22,6 +22,11 @@ public class HttpMessage {
         }
 
     }
+
+    public HttpMessage(String startLine, String messageBody){
+        this.startLine = startLine;
+        this.messageBody = messageBody;
+    }
     //********************************* klassemetoder *************
 
 
@@ -75,6 +80,16 @@ public class HttpMessage {
         return headerFields.get(headerName);// headerFields sin get av headerName
     }
 
+    // skriver tilbake en httpmessage til socketen
+    public void write(Socket socket) throws IOException {
+        String response = startLine + "\r\n" +
+                "Content-Length: " + messageBody.getBytes().length + "\r\n" +
+                "Connection: close\r\n" +
+                "\r\n" +
+                messageBody;
+        //  sender responsen ut fra clientSocket
+        socket.getOutputStream().write(response.getBytes());
+    }
 }
 
 

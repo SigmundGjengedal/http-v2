@@ -24,6 +24,8 @@ public class HttpServer {
     private RoleDao roleDao;
 
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
+    // lagrer controllers i map
+    private HashMap<String, HttpController> controllers = new HashMap<>();
 
     public HttpServer(int serverPort) throws IOException {
         // må lytte til en severSocket på samme port som clienten:
@@ -67,6 +69,12 @@ public class HttpServer {
             fileTarget = requestTarget;
         }
 
+        if (controllers.containsKey(fileTarget)) {
+            HttpMessage response = controllers.get(fileTarget).handle(httpMessage);
+            response.write(clientSocket);
+            return;
+        }
+
         // ******************* kontrollstuktur :  iht hva fileTarget og query ble i forrige steg:
 
         if(fileTarget.equals("/api/hello")) {
@@ -81,7 +89,7 @@ public class HttpServer {
             writeOkResponse(clientSocket, responseText, "text/html");
 
         }
-        if(requestTarget.equals("/api/listPeople")){
+        else if(requestTarget.equals("/api/listPeople")){
             // String messageBody = "DETTE ER LISTEN";
             String text = "";
             String messageBody = people.toString();
@@ -94,15 +102,6 @@ public class HttpServer {
             person.setLastName(queryMap.get("lastName"));
             people.add(person);
             writeOkResponse(clientSocket,"it is done", "text/html");
-
-        } else if (fileTarget.equals("/api/roleOptions")) {
-            String responseText = "";
-            int value = 1;
-            for(String role : roleDao.listAll()){
-                responseText += "<option value=" +(value++) +">" + role + "</option>";
-            }
-            writeOkResponse(clientSocket, responseText, "text/html");
-
         }else{
             // satt opp for å handtere filstruktur med jar fil. Angir hvor vi finner koden og leser/parser bytes.
             InputStream fileResource = getClass().getResourceAsStream(fileTarget);
@@ -203,6 +202,6 @@ public class HttpServer {
     }
 
     public void addController(String path, HttpController controller) {
-
+        controllers.put(path, controller);
     }
 }
