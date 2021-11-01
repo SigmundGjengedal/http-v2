@@ -101,15 +101,13 @@ class HttpServerTest {
      void shouldReturnRolesFromServer() throws IOException, SQLException {
         // gitt at serveren min er satt opp med en del roller vi skal returnere, så er det disse rollene vi skal returnere:
         RoleDao roleDao = new RoleDao(TestData.testDataSource());
-        roleDao.save("Teacher");
-        roleDao.save("Student");
 
         server.addController("/api/roleOptions",new RoleOptionsController(roleDao));
 
 
         HttpGetClient client = new HttpGetClient("localhost",server.getPort(),"/api/roleOptions");
         assertEquals(
-            "<option value=1>Teacher</option><option value=2>Student</option>",
+            "<option value=1>teacher</option><option value=2>student</option><option value=3>assistant</option>",
                 client.getMessageBody()
                 );
     }
