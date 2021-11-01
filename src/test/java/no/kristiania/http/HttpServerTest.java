@@ -116,7 +116,7 @@ class HttpServerTest {
     }
 
     @Test
-    void shouldCreateNewPerson() throws IOException {
+    void shouldCreateNewPerson() throws IOException, SQLException {
         PersonDao personDao = new PersonDao(TestData.testDataSource());
         server.addController("/api/newPerson",new AddPersonController(personDao));
 
@@ -128,7 +128,7 @@ class HttpServerTest {
                 "lastName=Gjengedal&firstName=Test"
         );
         assertEquals(200,postClient.getStatusCode());
-          Person person = server.getPeople().get(0);
+          Person person = personDao.listAll().get(0);
         assertEquals("Test", person.getFirstName());
     }
 

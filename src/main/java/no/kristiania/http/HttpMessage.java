@@ -27,8 +27,9 @@ public class HttpMessage {
         this.startLine = startLine;
         this.messageBody = messageBody;
     }
-    //********************************* klassemetoder *************
 
+
+    //********************************* klassemetoder ***********************************
 
     // ***** Leser requestline, eller responsline.
     // (f.eks "HTTP/1.1 200 OK").
@@ -46,6 +47,18 @@ public class HttpMessage {
 
         // returner stringen:
         return result.toString();
+    }
+
+    public static Map<String, String> parseRequestParameters(String query) {
+        // parser ut queryParameterene. De som gir fornavn og etternavn. & tegnet skiller forskjellig key value sett.( s=x&z=n )
+        Map<String, String> queryMap = new HashMap<>();
+        for (String queryParameter : query.split("&")) {
+            int equalsPos = queryParameter.indexOf('=');
+            String parameterName = queryParameter.substring(0,equalsPos);
+            String parameterValue = queryParameter.substring(equalsPos +1);
+            queryMap.put(parameterName,parameterValue);
+        }
+        return queryMap;
     }
 
     // leser headers

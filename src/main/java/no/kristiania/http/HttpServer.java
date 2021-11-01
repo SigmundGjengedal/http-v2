@@ -75,7 +75,7 @@ public class HttpServer {
         else if(fileTarget.equals("/api/hello")) {
             String yourName = "World";
             if (query != null) {
-                Map<String, String> queryMap = parseRequestParameters(query);
+                Map<String, String> queryMap = HttpMessage.parseRequestParameters(query);
                 // henter ut noen av variablene
                 yourName = queryMap.get("lastName") + ", " + queryMap.get("firstName");
             }
@@ -91,10 +91,10 @@ public class HttpServer {
             writeOkResponse(clientSocket, messageBody,"text/html");
         }
         else if (fileTarget.equals("/api/newPerson")) {
-            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
             Person person = new Person();
-            person.setFirstName(queryMap.get("firstName"));
             person.setLastName(queryMap.get("lastName"));
+            person.setFirstName(queryMap.get("firstName"));
             people.add(person);
             writeOkResponse(clientSocket,"it is done", "text/html");
         }else{
@@ -126,18 +126,6 @@ public class HttpServer {
     }
 
     //************************** HM
-
-    private Map<String, String> parseRequestParameters(String query) {
-        // parser ut queryParameterene. De som gir fornavn og etternavn. & tegnet skiller forskjellig key value sett.( s=x&z=n )
-        Map<String, String> queryMap = new HashMap<>();
-        for (String queryParameter : query.split("&")) {
-            int equalsPos = queryParameter.indexOf('=');
-            String parameterName = queryParameter.substring(0,equalsPos);
-            String parameterValue = queryParameter.substring(equalsPos +1);
-            queryMap.put(parameterName,parameterValue);
-        }
-        return queryMap;
-    }
 
     private void writeOkResponse(Socket clientSocket, String responseText, String contentType) throws IOException {
         String response = "HTTP/1.1 200 ok\r\n" +
