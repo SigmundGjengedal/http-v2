@@ -4,6 +4,7 @@ import no.kristiania.person.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -131,8 +132,8 @@ class HttpServerTest {
         HttpGetClient getClient = new HttpGetClient("localhost",server.getPort(),"/api/listPeople");
 
         assertThat(getClient.getMessageBody())
-                .contains(person1.getLastName() +" , " + person1.getFirstName())
-                .contains(person2.getLastName() +" , " + person2.getFirstName())
+                .contains("<div>"+ person1.getFirstName() +" , " + person1.getLastName() + "</div>")
+                .contains("<div>"+person2.getFirstName() +" , " + person2.getLastName() + "</div>")
                 ;
 
     }
