@@ -37,7 +37,7 @@ public class PersonDaoTest {
 
     }
 
-    private Person examplePerson() {
+    public static Person examplePerson() {
         Person person = new Person();
         person.setFirstName(TestData.pickOne("Sigmund","Sandra","Jacob","Kåre"));
         person.setLastName(TestData.pickOne("Olsen","Steinsberg","Petterson","Hagen"));
