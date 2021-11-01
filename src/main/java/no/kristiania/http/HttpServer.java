@@ -1,6 +1,7 @@
 package no.kristiania.http;
 
 import no.kristiania.person.Person;
+import no.kristiania.person.PersonDao;
 import no.kristiania.person.RoleDao;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -134,10 +135,14 @@ public class HttpServer {
  // ****************** MAIN
 
     public static void main(String[] args) throws IOException {
-        HttpServer httpServer = new HttpServer(1800);
-        // hvor vi finner rollene
-        new RoleDao(createDataSource());
+        DataSource dataSource = createDataSource();
+        RoleDao roleDao = new RoleDao(dataSource);
+        PersonDao personDao = new PersonDao(dataSource);
 
+        HttpServer httpServer = new HttpServer(1800);
+        // hvor vi adder data til databasen. En controller gis en tilsvarende dao:
+        httpServer.addController("/api/roleOptions", new RoleOptionsController(roleDao));
+        httpServer.addController("/api/newPerson", new AddPersonController(personDao));
         logger.info("Starting http://localhost:{}/index.html",httpServer.getPort());
 
     }
