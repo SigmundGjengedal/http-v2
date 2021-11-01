@@ -39,7 +39,7 @@ public class PersonDaoTest {
 
     public static Person examplePerson() {
         Person person = new Person();
-        person.setFirstName(TestData.pickOne("Sigmund","Sandra","Jacob","Kåre"));
+        person.setFirstName(TestData.pickOne("Sigmund","Sandra","Jacob","Kaare"));
         person.setLastName(TestData.pickOne("Olsen","Steinsberg","Petterson","Hagen"));
         return person;
 
