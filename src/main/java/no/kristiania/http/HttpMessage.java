@@ -2,6 +2,7 @@ package no.kristiania.http;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,10 +79,11 @@ public class HttpMessage {
     // Leser den som bytes. Returner som en string via toString.
     static String readBody(Socket socket, int contentLength) throws IOException {
         StringBuilder body = new StringBuilder();
+        byte[] buffer = new byte[contentLength];
         for (int i = 0; i < contentLength; i++) {
-            body.append((char)socket.getInputStream().read());
+            buffer[i] = (byte) socket.getInputStream().read();
         }
-        return body.toString();
+        return new String(buffer , StandardCharsets.UTF_8);
     }
 
 
