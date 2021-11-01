@@ -125,10 +125,10 @@ class HttpServerTest {
         Person person2 = PersonDaoTest.examplePerson();
         personDao.save(person2);
         // legger til controller
-        server.addController("/api/people", new ListPeopleController(personDao));
+        server.addController("/api/listPeople", new ListPeopleController(personDao));
 
         // sender en get request for people
-        HttpGetClient getClient = new HttpGetClient("localhost",server.getPort(),"/api/people");
+        HttpGetClient getClient = new HttpGetClient("localhost",server.getPort(),"/api/listPeople");
 
         assertThat(getClient.getMessageBody())
                 .contains(person1.getLastName() +" , " + person1.getFirstName())
