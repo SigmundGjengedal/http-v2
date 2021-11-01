@@ -17,8 +17,7 @@ import java.util.*;
 public class HttpServer {
 
     private final ServerSocket serverSocket;
-    private List<Person> people = new ArrayList<>();
-    private HashMap<String, HttpController> controllers = new HashMap<>();
+    private final HashMap<String, HttpController> controllers = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
 
@@ -83,20 +82,6 @@ public class HttpServer {
             String responseText = "<p>Hello " + yourName + "</p>";
             writeOkResponse(clientSocket, responseText, "text/html");
 
-        }
-        else if(requestTarget.equals("/api/listPeople")){
-            // String messageBody = "DETTE ER LISTEN";
-            String text = "";
-            String messageBody = people.toString();
-            writeOkResponse(clientSocket, messageBody,"text/html");
-        }
-        else if (fileTarget.equals("/api/newPerson")) {
-            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
-            Person person = new Person();
-            person.setLastName(queryMap.get("lastName"));
-            person.setFirstName(queryMap.get("firstName"));
-            people.add(person);
-            writeOkResponse(clientSocket,"it is done", "text/html");
         }else{
             // satt opp for å handtere filstruktur med jar fil. Angir hvor vi finner koden og leser/parser bytes.
             InputStream fileResource = getClass().getResourceAsStream(fileTarget);
@@ -143,9 +128,6 @@ public class HttpServer {
         return serverSocket.getLocalPort();
     }
 
-    public List<Person> getPeople() {
-        return people;
-    }
 
 
 
