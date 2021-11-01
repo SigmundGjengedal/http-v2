@@ -71,7 +71,7 @@
                 <configuration>
                     <archive>
                          <manifestEntries>
-                             <Main-Class>no.kristiania.http.HttpServer</Main-Class>
+                             <Main-Class>no.kristiania.http.PersonnelServer</Main-Class>
                          </manifestEntries>
                     </archive>
                 </configuration>
@@ -91,6 +91,5 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
 
