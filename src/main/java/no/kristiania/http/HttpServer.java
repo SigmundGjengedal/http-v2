@@ -96,6 +96,8 @@ public class HttpServer {
                 // men endres om...
                 if (requestTarget.endsWith(".html")){
                     contentType = "text/html";
+                }else if (requestTarget.endsWith(".css")){
+                    contentType ="text/css"; // nå kan vi ha <!DOCTYPE> på toppen av html-sidene.
                 }
                 writeOkResponse(clientSocket, responseText, contentType);
                 return;

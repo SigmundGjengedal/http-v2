@@ -25,6 +25,7 @@ public class PersonnelServer {
         // hvor vi adder data til databasen. En controller gis en tilsvarende dao:
         httpServer.addController("/api/roleOptions", new RoleOptionsController(roleDao));
         httpServer.addController("/api/newPerson", new AddPersonController(personDao));
+        httpServer.addController("/api/people", new ListPeopleController(personDao));
         logger.info("Starting http://localhost:{}/index.html",httpServer.getPort());
 
     }

@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,15 +7,15 @@
 </head>
 <body>
 <main>
-    <h1>List of people</h1>
-    <div id="productList"></div>
+    <h1>List of all personnel</h1>
+    <div id="personnel"></div>
 </main>
 </body>
 <script>
-    fetch("/api/listPeople").then(function (res) {
-        return res.text()
+    fetch("/api/people").then(function (response) {
+        return response.text()
     }).then(function (text) {
-        document.querySelector("#productList").innerHTML = text;
+        document.querySelector("#personnel").innerHTML = text;
     });
 </script>
 </html>

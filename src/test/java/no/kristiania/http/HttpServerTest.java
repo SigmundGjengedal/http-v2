@@ -113,6 +113,31 @@ class HttpServerTest {
                 );
     }
 
+
+    // test for å liste folk ut fra databasen:
+    @Test
+    void shouldListPeopleFromDataBase() throws SQLException, IOException {
+
+        // legger data i databasen:
+        PersonDao personDao = new PersonDao(TestData.testDataSource());
+        Person person1 = PersonDaoTest.examplePerson();
+        personDao.save(person1);
+        Person person2 = PersonDaoTest.examplePerson();
+        personDao.save(person2);
+        // legger til controller
+        server.addController("/api/people", new ListPeopleController(personDao));
+
+        // sender en get request for people
+        HttpGetClient getClient = new HttpGetClient("localhost",server.getPort(),"/api/people");
+
+        assertThat(getClient.getMessageBody())
+                .contains(person1.getLastName() +" , " + person1.getFirstName())
+                .contains(person2.getLastName() +" , " + person2.getFirstName())
+                ;
+
+    }
+
+    // sjekker om vi kan inserte data og lagre det:
     @Test
     void shouldCreateNewPerson() throws IOException, SQLException {
         PersonDao personDao = new PersonDao(TestData.testDataSource());
@@ -123,33 +148,13 @@ class HttpServerTest {
                 "localhost",
                 server.getPort(),
                 "/api/newPerson",
-                "lastName=Gjengedal&firstName=Test"
+                "lastName=Testessen&firstName=Test"
         );
         assertEquals(200,postClient.getStatusCode());
-          Person person = personDao.listAll().get(0);
-        assertEquals("Test", person.getFirstName());
-    }
-
-    @Test
-    void shouldListPeopleFromDataBase() throws SQLException, IOException {
-        PersonDao personDao = new PersonDao(TestData.testDataSource());
-        Person person1 = PersonDaoTest.examplePerson();
-        personDao.save(person1);
-        Person person2 = PersonDaoTest.examplePerson();
-        personDao.save(person2);
-
-        HttpGetClient getClient = new HttpGetClient("localhost",server.getPort(),"/api/people");
-
-        assertThat(getClient.getMessageBody())
-                .contains(person1.getLastName() +" , " + person1.getFirstName())
-                .contains(person2.getLastName() +" , " + person2.getFirstName())
-                ;
-
-
-
-
-
-
-
+        assertThat(personDao.listAll())
+                .anySatisfy(p -> {
+                    assertThat(p.getFirstName()).isEqualTo("Test");
+                    assertThat(p.getLastName()).isEqualTo("Testessen");
+                });
     }
 }
