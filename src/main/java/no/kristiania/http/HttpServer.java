@@ -1,7 +1,6 @@
 package no.kristiania.http;
 
 import no.kristiania.person.Person;
-import no.kristiania.person.PersonDao;
 import no.kristiania.person.RoleDao;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -12,8 +11,6 @@ import javax.sql.DataSource;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -21,11 +18,9 @@ public class HttpServer {
 
     private final ServerSocket serverSocket;
     private List<Person> people = new ArrayList<>();
-    private RoleDao roleDao;
-
-    private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
-    // lagrer controllers i map
     private HashMap<String, HttpController> controllers = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
+
 
     public HttpServer(int serverPort) throws IOException {
         // må lytte til en severSocket på samme port som clienten:
@@ -77,7 +72,7 @@ public class HttpServer {
 
         // ******************* kontrollstuktur :  iht hva fileTarget og query ble i forrige steg:
 
-        if(fileTarget.equals("/api/hello")) {
+        else if(fileTarget.equals("/api/hello")) {
             String yourName = "World";
             if (query != null) {
                 Map<String, String> queryMap = parseRequestParameters(query);
@@ -160,10 +155,6 @@ public class HttpServer {
         return serverSocket.getLocalPort();
     }
 
-    public void setRoleDao(RoleDao roleDao) {
-        this.roleDao = roleDao;
-    }
-
     public List<Person> getPeople() {
         return people;
     }
@@ -173,10 +164,10 @@ public class HttpServer {
  // ****************** MAIN
 
     public static void main(String[] args) throws IOException {
-        // i chrome: localhost:1991/index.html
-        HttpServer httpServer = new HttpServer(1991);
+        HttpServer httpServer = new HttpServer(1800);
         // hvor vi finner rollene
-        httpServer.setRoleDao(new RoleDao(createDataSource()));
+        new RoleDao(createDataSource());
+
         logger.info("Starting http://localhost:{}/index.html",httpServer.getPort());
 
     }

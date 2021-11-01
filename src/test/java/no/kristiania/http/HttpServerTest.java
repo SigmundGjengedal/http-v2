@@ -1,6 +1,7 @@
 package no.kristiania.http;
 
 import no.kristiania.person.Person;
+import no.kristiania.person.PersonDao;
 import no.kristiania.person.RoleDao;
 import no.kristiania.person.TestData;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.LocalTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -104,7 +104,7 @@ class HttpServerTest {
         RoleDao roleDao = new RoleDao(TestData.testDataSource());
         roleDao.save("Teacher");
         roleDao.save("Student");
-        server.setRoleDao(roleDao);
+
         server.addController("/api/roleOptions",new RoleOptionsController(roleDao));
 
 
@@ -117,6 +117,10 @@ class HttpServerTest {
 
     @Test
     void shouldCreateNewPerson() throws IOException {
+        PersonDao personDao = new PersonDao(TestData.testDataSource());
+        server.addController("/api/newPerson",new AddPersonController(personDao));
+
+
         HttpPostClient postClient = new HttpPostClient(
                 "localhost",
                 server.getPort(),
