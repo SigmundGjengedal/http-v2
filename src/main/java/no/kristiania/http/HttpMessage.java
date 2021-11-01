@@ -78,7 +78,6 @@ public class HttpMessage {
     // ****leser hele body.
     // Leser den som bytes. Returner som en string via toString.
     static String readBody(Socket socket, int contentLength) throws IOException {
-        StringBuilder body = new StringBuilder();
         byte[] buffer = new byte[contentLength];
         for (int i = 0; i < contentLength; i++) {
             buffer[i] = (byte) socket.getInputStream().read();
@@ -103,7 +102,7 @@ public class HttpMessage {
                 "\r\n" +
                 messageBody;
         //  sender responsen ut fra clientSocket
-        socket.getOutputStream().write(response.getBytes());
+        socket.getOutputStream().write(response.getBytes(StandardCharsets.UTF_8));
     }
 }
 

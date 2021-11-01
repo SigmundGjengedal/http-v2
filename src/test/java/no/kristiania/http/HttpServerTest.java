@@ -97,7 +97,6 @@ class HttpServerTest {
 
     }
 
-    @Test
      void shouldReturnRolesFromServer() throws IOException, SQLException {
         // gitt at serveren min er satt opp med en del roller vi skal returnere, så er det disse rollene vi skal returnere:
         RoleDao roleDao = new RoleDao(TestData.testDataSource());
@@ -114,7 +113,6 @@ class HttpServerTest {
 
 
     // test for å liste folk ut fra databasen:
-    @Test
     void shouldListPeopleFromDataBase() throws SQLException, IOException {
 
         // legger data i databasen:
